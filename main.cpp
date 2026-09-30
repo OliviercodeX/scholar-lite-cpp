@@ -5,8 +5,9 @@ int main() {
 	
 
 	cout << "Hola me llamo Mainor\n";
-	cout << 40;
+	cout << 20;
 	cout << 30;
+	cout << 15;
 
 	return 0;
 
