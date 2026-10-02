@@ -14,7 +14,10 @@ struct coautor;
 struct citacion;
 struct proyecto;
 struct universidad;
-//dd
+struct pubInvestigador;
+struct pubRevista;
+struct coautorPublicacion;
+//dd            
 
 // ============================================================
 //  LISTAS SIMPLES 
@@ -30,6 +33,7 @@ struct investigador {
     string correo;
     float indiceH;
     coautor* coautores;              // sublista (doble) de coautores
+    pubInvestigador* publicaciones;
 
     investigador* sig;
 }*primerInvestigador;
@@ -42,6 +46,7 @@ struct revista {
     string pais;
     float factorImpacto;
     char cuartil;                    // 'Q1','Q2','Q3','Q4' -> usar char o string
+    pubRevista* publicaciones;
 
     revista* sig;
 }*primeraRevista;
@@ -73,6 +78,7 @@ struct publicacion {
     revista* suRevista;               // enlace a revista
     proyecto* suProyecto;             // enlace a proyecto
     citacion* citas;                  // sublista (doble) de citaciones
+    coautorPublicacion* coautores;
 
     publicacion* sig;
 }*primeraPublicacion;
@@ -131,6 +137,23 @@ struct universidad {
     universidad* sig;
     universidad* ant;
 }*primeraUniversidad;
+struct pubInvestigador {
+    publicacion* laPublicacion;
+    pubInvestigador* sig;
+    pubInvestigador* ant;
+};
+
+struct pubRevista {
+    publicacion* laPublicacion;
+    pubRevista* sig;
+    pubRevista* ant;
+};
+
+struct coautorPublicacion {
+    coautor* elCoautor;
+    coautorPublicacion* sig;
+    coautorPublicacion* ant;
+};
 
 
 int main() {
