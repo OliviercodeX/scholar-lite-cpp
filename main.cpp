@@ -176,17 +176,73 @@ struct coautorPublicacion {
 
 //---------------------------------------------Parte de Mainor------------------------------------------------------
 //insertar universidad
-// Buscar por ID. Devuelve NULL si no existe (la usa también investigador)
-universidad* buscarUniversidad(int id){
-    
+// Busca una universidad por ID. Devuelve NULL si no existe.
+universidad* buscarUniversidad(int id) {
+    universidad* aux = primeraUniversidad;
+    while (aux != NULL) {
+        if (aux->idUniversidad == id)
+            return aux;
+        aux = aux->sig;
+    }
+    return NULL;
+}
 
-};
+// Inserta al final de la lista doble. Valida y comprueba que el ID sea unico.
+// Devuelve true si se inserto, false si fallo una validacion.
+bool insertarUniversidad(int id, string nombre, string pais, int ranking) {
+    // Validaciones
+    if (id <= 0) {
+        cout << "Error: el ID debe ser mayor que 0." << endl;
+        return false;
+    }
+    if (buscarUniversidad(id) != NULL) {
+        cout << "Error: ya existe una universidad con ese ID." << endl;
+        return false;
+    }
+    if (nombre == "" || pais == "") {
+        cout << "Error: nombre y pais no pueden estar vacios." << endl;
+        return false;
+    }
+    if (ranking <= 0) {
+        cout << "Error: el ranking debe ser mayor que 0." << endl;
+        return false;
+    }
 
-// Inserta al final de la lista doble. Valida y comprueba que el ID sea único
-bool insertarUniversidad(int id, string nombre, string pais, int ranking);
+    // Crear nodo
+    universidad* nueva = new universidad;
+    nueva->idUniversidad = id;
+    nueva->nombre = nombre;
+    nueva->pais = pais;
+    nueva->ranking = ranking;
+    nueva->sig = NULL;
+    nueva->ant = NULL;
 
-// Muestra todas las universidades
-void mostrarUniversidades();
+    // Insertar al final
+    if (primeraUniversidad == NULL) {
+        primeraUniversidad = nueva;
+    } else {
+        universidad* aux = primeraUniversidad;
+        while (aux->sig != NULL)
+            aux = aux->sig;
+        aux->sig = nueva;
+        nueva->ant = aux;    // enlace hacia atras, lo que la hace doble
+    }
+    return true;
+}
+
+// Muestra todas las universidades (para probar)
+void mostrarUniversidades() {
+    if (primeraUniversidad == NULL) {
+        cout << "No hay universidades registradas." << endl;
+        return;
+    }
+    universidad* aux = primeraUniversidad;
+    while (aux != NULL) {
+        cout << aux->idUniversidad << " | " << aux->nombre << " | "
+             << aux->pais << " | Ranking: " << aux->ranking << endl;
+        aux = aux->sig;
+    }
+}
 
 // Muestra una sola (útil para reportes)
 void mostrarUniversidad(universidad* uni);
@@ -209,6 +265,12 @@ int main() {
     primerProyecto = NULL;
     primeraUniversidad = NULL;
 
-    cout << "Sistema de Gestion de Produccion Cientifica" << endl;
+    cout << "|->->->->->->->->Sistema de Gestion de Produccion Cientifica<-<-<-<-<-<-<-<-<-" << endl;
+    insertarUniversidad(1, "ITCR", "Costa Rica", 15);
+    insertarUniversidad(2, "UCR", "Costa Rica", 10);
+    insertarUniversidad(1, "Repetida", "Peru", 3);   // debe dar error de ID repetido
+    insertarUniversidad(3, "", "Mexico", 5);          // debe dar error de nombre vacio
+    mostrarUniversidades();
+    
     return 0;
 }
