@@ -230,6 +230,20 @@ bool insertarUniversidad(int id, string nombre, string pais, int ranking) {
     return true;
 }
 
+
+
+// Muestra una sola (útil para reportes)
+// Muestra los datos de una sola universidad
+void mostrarUniversidad(universidad* uni) {
+    if (uni == NULL) {
+        cout << "Universidad no encontrada." << endl;
+        return;
+    }
+    cout << "ID: " << uni->idUniversidad
+         << " | Nombre: " << uni->nombre
+         << " | Pais: " << uni->pais
+         << " | Ranking: " << uni->ranking << endl;
+}
 // Muestra todas las universidades (para probar)
 void mostrarUniversidades() {
     if (primeraUniversidad == NULL) {
@@ -238,20 +252,69 @@ void mostrarUniversidades() {
     }
     universidad* aux = primeraUniversidad;
     while (aux != NULL) {
-        cout << aux->idUniversidad << " | " << aux->nombre << " | "
-             << aux->pais << " | Ranking: " << aux->ranking << endl;
+        mostrarUniversidad(aux);
         aux = aux->sig;
     }
 }
+// Valida los datos de una universidad (se reutiliza al insertar y modificar)
+bool validarDatosUniversidad(string nombre, string pais, int ranking) {
+    if (nombre == "" || pais == "") {
+        cout << "Error: nombre y pais no pueden estar vacios." << endl;
+        return false;
+    }
+    if (ranking <= 0) {
+        cout << "Error: el ranking debe ser mayor que 0." << endl;
+        return false;
+    }
+    return true;
+}
 
-// Muestra una sola (útil para reportes)
-void mostrarUniversidad(universidad* uni);
+// Modifica nombre, pais y ranking de una universidad
+bool modificarUniversidad(int id, string nombre, string pais, int ranking) {
+    universidad* uni = buscarUniversidad(id);
+    if (uni == NULL) {
+        cout << "Error: no existe una universidad con ese ID." << endl;
+        return false;
+    }
+    if (!validarDatosUniversidad(nombre, pais, ranking))
+        return false;
 
-// Modifica nombre, país y ranking de una universidad (la elegida por A para las 3 modificaciones)
-bool modificarUniversidad(int id, string nombre, string pais, int ranking);
+    uni->nombre = nombre;
+    uni->pais = pais;
+    uni->ranking = ranking;
+    return true;
+}
 
-// Elimina por ID (es la eliminación en lista doble)
-bool eliminarUniversidad(int id);
+// Elimina una universidad por ID (lista doble)
+bool eliminarUniversidad(int id) {
+    universidad* uni = buscarUniversidad(id);
+    if (uni == NULL) {
+        cout << "Error: no existe una universidad con ese ID." << endl;
+        return false;
+    }
+
+    // No eliminar si algun investigador pertenece a ella (evita punteros colgantes)
+    investigador* inv = primerInvestigador;
+    while (inv != NULL) {
+        if (inv->suUniversidad == uni) {
+            cout << "Error: hay investigadores asociados a esta universidad." << endl;
+            return false;
+        }
+        inv = inv->sig;
+    }
+
+    // Reconectar vecinos
+    if (uni->ant == NULL)                 // es el primero
+        primeraUniversidad = uni->sig;
+    else
+        uni->ant->sig = uni->sig;
+
+    if (uni->sig != NULL)                 // no es el ultimo
+        uni->sig->ant = uni->ant;
+
+    delete uni;
+    return true;
+}
 
 // -----------------------------------------------------------------------------------------------------------------
 
@@ -268,8 +331,12 @@ int main() {
     cout << "|->->->->->->->->Sistema de Gestion de Produccion Cientifica<-<-<-<-<-<-<-<-<-" << endl;
     insertarUniversidad(1, "ITCR", "Costa Rica", 15);
     insertarUniversidad(2, "UCR", "Costa Rica", 10);
+    insertarUniversidad(4, "Harvard", "Estados Unidos", 1);
     insertarUniversidad(1, "Repetida", "Peru", 3);   // debe dar error de ID repetido
     insertarUniversidad(3, "", "Mexico", 5);          // debe dar error de nombre vacio
+    mostrarUniversidades();
+    eliminarUniversidad(1);       // primero
+    eliminarUniversidad(99);      // error: no existe
     mostrarUniversidades();
     
     return 0;
