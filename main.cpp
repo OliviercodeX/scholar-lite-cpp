@@ -315,7 +315,80 @@ bool eliminarUniversidad(int id) {
     delete uni;
     return true;
 }
+//
 
+//---------------------------------------------Areas de investigacion---------------------------------------------
+
+// Busca un area por ID. Devuelve NULL si no existe.
+areaInvestigacion* buscarArea(int id) {
+    areaInvestigacion* aux = primeraArea;
+    while (aux != NULL) {
+        if (aux->idArea == id)
+            return aux;
+        aux = aux->sig;
+    }
+    return NULL;
+}
+
+// Inserta al final de la lista simple. Valida y comprueba que el ID sea unico.
+// Devuelve true si se inserto, false si fallo una validacion.
+bool insertarArea(int id, string nombre, string descripcion) {
+    // Validaciones
+    if (id <= 0) {
+        cout << "Error: el ID debe ser mayor que 0." << endl;
+        return false;
+    }
+    if (buscarArea(id) != NULL) {
+        cout << "Error: ya existe un area con ese ID." << endl;
+        return false;
+    }
+    if (nombre == "" || descripcion == "") {
+        cout << "Error: nombre y descripcion no pueden estar vacios." << endl;
+        return false;
+    }
+
+    // Crear nodo
+    areaInvestigacion* nueva = new areaInvestigacion;
+    nueva->idArea = id;
+    nueva->nombreArea = nombre;
+    nueva->descripcion = descripcion;
+    nueva->sig = NULL;
+
+    // Insertar al final
+    if (primeraArea == NULL) {
+        primeraArea = nueva;
+    } else {
+        areaInvestigacion* aux = primeraArea;
+        while (aux->sig != NULL)
+            aux = aux->sig;
+        aux->sig = nueva;
+    }
+    return true;
+}
+
+// Muestra los datos de una sola area
+void mostrarArea(areaInvestigacion* area) {
+    if (area == NULL) {
+        cout << "Area no encontrada." << endl;
+        return;
+    }
+    cout << "ID: " << area->idArea
+         << " | Area: " << area->nombreArea
+         << " | Descripcion: " << area->descripcion << endl;
+}
+
+// Muestra todas las areas
+void mostrarAreas() {
+    if (primeraArea == NULL) {
+        cout << "No hay areas de investigacion registradas." << endl;
+        return;
+    }
+    areaInvestigacion* aux = primeraArea;
+    while (aux != NULL) {
+        mostrarArea(aux);
+        aux = aux->sig;
+    }
+}
 // -----------------------------------------------------------------------------------------------------------------
 
 
@@ -338,6 +411,16 @@ int main() {
     eliminarUniversidad(1);       // primero
     eliminarUniversidad(99);      // error: no existe
     mostrarUniversidades();
+
+
+    cout << "Prueba de areas" << endl;
+    insertarArea(1, "Ciberseguridad", "Proteccion de sistemas y datos");
+    insertarArea(2, "Inteligencia Artificial", "Aprendizaje automatico y agentes");
+    insertarArea(1, "Repetida", "Prueba de ID repetido");   // error: ID repetido
+    insertarArea(3, "", "Prueba de nombre vacio");           // error: nombre vacio
+    mostrarAreas();
+    mostrarArea(buscarArea(2));
+    mostrarArea(buscarArea(99));    
     
     return 0;
 }
