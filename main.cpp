@@ -2,6 +2,24 @@
 using namespace std;
 //Mainor Olivier Martinez Sanchez
 // Gerald Andres Soto Esquivel
+
+/*-------------------Para buscar por id estos serán los nombres de las funciones-----------
+
+// ===== FIRMAS ACORDADAS =====
+// A:
+investigador* buscarInvestigador(int id);
+universidad* buscarUniversidad(int id);
+areaInvestigacion* buscarArea(int id);
+coautor* buscarCoautor(investigador* inv, int id);
+// B:
+revista* buscarRevista(int id);
+publicacion* buscarPublicacion(int id);
+proyecto* buscarProyecto(int id);
+
+
+*/
+
+
 // ============================================================
 //  DECLARACIONES ADELANTADAS
 //  (se necesitan porque las estructuras se apuntan entre si)
@@ -14,7 +32,10 @@ struct coautor;
 struct citacion;
 struct proyecto;
 struct universidad;
-//dd
+struct pubInvestigador;
+struct pubRevista;
+struct coautorPublicacion;
+//dd            
 
 
 //Gerald Andres xd
@@ -33,6 +54,7 @@ struct investigador {
     string correo;
     float indiceH;
     coautor* coautores;              // sublista (doble) de coautores
+    pubInvestigador* publicaciones;
 
     investigador* sig;
 }*primerInvestigador;
@@ -45,6 +67,7 @@ struct revista {
     string pais;
     float factorImpacto;
     char cuartil;                    // 'Q1','Q2','Q3','Q4' -> usar char o string
+    pubRevista* publicaciones;
 
     revista* sig;
 }*primeraRevista;
@@ -76,6 +99,7 @@ struct publicacion {
     revista* suRevista;               // enlace a revista
     proyecto* suProyecto;             // enlace a proyecto
     citacion* citas;                  // sublista (doble) de citaciones
+    coautorPublicacion* coautores;
 
     publicacion* sig;
 }*primeraPublicacion;
@@ -134,6 +158,53 @@ struct universidad {
     universidad* sig;
     universidad* ant;
 }*primeraUniversidad;
+struct pubInvestigador {
+    publicacion* laPublicacion;
+    pubInvestigador* sig;
+    pubInvestigador* ant;
+};
+
+struct pubRevista {
+    publicacion* laPublicacion;
+    pubRevista* sig;
+    pubRevista* ant;
+};
+
+struct coautorPublicacion {
+    coautor* elCoautor;
+    coautorPublicacion* sig;
+    coautorPublicacion* ant;
+};
+
+
+//---------------------------------------------Parte de Mainor------------------------------------------------------
+//insertar universidad
+// Buscar por ID. Devuelve NULL si no existe (la usa también investigador)
+universidad* buscarUniversidad(int id){
+    
+
+};
+
+// Inserta al final de la lista doble. Valida y comprueba que el ID sea único
+bool insertarUniversidad(int id, string nombre, string pais, int ranking);
+
+// Muestra todas las universidades
+void mostrarUniversidades();
+
+// Muestra una sola (útil para reportes)
+void mostrarUniversidad(universidad* uni);
+
+// Modifica nombre, país y ranking de una universidad (la elegida por A para las 3 modificaciones)
+bool modificarUniversidad(int id, string nombre, string pais, int ranking);
+
+// Elimina por ID (es la eliminación en lista doble)
+bool eliminarUniversidad(int id);
+
+// -----------------------------------------------------------------------------------------------------------------
+
+
+
+
 
 
 int main() {
