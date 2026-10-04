@@ -604,6 +604,15 @@ void mostrarCoautores(investigador* inv) {
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //------------------------------------------------------------------------------------------------------------------
 
+// Funciones auxiliares para ordenar la salida de las pruebas
+void titulo(string texto) {
+    cout << endl << "========== " << texto << " ==========" << endl;
+}
+
+void prueba(string texto) {
+    cout << "-> " << texto << endl;
+}
+
 int main() {
     // Al arrancar, todas las listas principales estan vacias
     primerInvestigador = NULL;
@@ -614,40 +623,93 @@ int main() {
     primeraUniversidad = NULL;
 
     cout << "|->->->->->->->->Sistema de Gestion de Produccion Cientifica<-<-<-<-<-<-<-<-<-" << endl;
+
+    // ---------------- UNIVERSIDADES ----------------
+    titulo("PRUEBA DE UNIVERSIDADES");
+    prueba("Insertar 4 validas");
     insertarUniversidad(1, "ITCR", "Costa Rica", 15);
     insertarUniversidad(2, "UCR", "Costa Rica", 10);
+    insertarUniversidad(3, "UNAM", "Mexico", 5);
     insertarUniversidad(4, "Harvard", "Estados Unidos", 1);
-    insertarUniversidad(1, "Repetida", "Peru", 3);   // debe dar error de ID repetido
-    insertarUniversidad(3, "", "Mexico", 5);          // debe dar error de nombre vacio
+    prueba("ID repetido (debe dar error)");
+    insertarUniversidad(1, "Repetida", "Peru", 3);
+    prueba("Nombre vacio (debe dar error)");
+    insertarUniversidad(5, "", "Mexico", 5);
+    prueba("Ranking invalido (debe dar error)");
+    insertarUniversidad(5, "UNA", "Costa Rica", 0);
+    prueba("Lista actual");
     mostrarUniversidades();
-    eliminarUniversidad(1);       // primero
-    eliminarUniversidad(99);      // error: no existe
+    prueba("Buscar ID 3 y buscar ID 99 (no existe)");
+    mostrarUniversidad(buscarUniversidad(3));
+    mostrarUniversidad(buscarUniversidad(99));
+    prueba("Modificar ID 2");
+    modificarUniversidad(2, "UCR Sede Central", "Costa Rica", 9);
+    mostrarUniversidad(buscarUniversidad(2));
+    prueba("Modificar ID 99 (debe dar error)");
+    modificarUniversidad(99, "X", "Y", 1);
+    prueba("Eliminar el primero (ID 1)");
+    eliminarUniversidad(1);
+    prueba("Eliminar ID 99 (debe dar error)");
+    eliminarUniversidad(99);
     mostrarUniversidades();
 
-
-    cout << "Prueba de areas" << endl;
+    // ---------------- AREAS ----------------
+    titulo("PRUEBA DE AREAS");
+    prueba("Insertar 2 validas");
     insertarArea(1, "Ciberseguridad", "Proteccion de sistemas y datos");
     insertarArea(2, "Inteligencia Artificial", "Aprendizaje automatico y agentes");
-    insertarArea(1, "Repetida", "Prueba de ID repetido");   // error: ID repetido
-    insertarArea(3, "", "Prueba de nombre vacio");           // error: nombre vacio
+    prueba("ID repetido (debe dar error)");
+    insertarArea(1, "Repetida", "Prueba de ID repetido");
+    prueba("Nombre vacio (debe dar error)");
+    insertarArea(3, "", "Prueba de nombre vacio");
+    prueba("Lista actual");
     mostrarAreas();
+    prueba("Buscar ID 2 y buscar ID 99 (no existe)");
     mostrarArea(buscarArea(2));
-    mostrarArea(buscarArea(99)); 
-    
+    mostrarArea(buscarArea(99));
 
+    // ---------------- INVESTIGADORES ----------------
+    titulo("PRUEBA DE INVESTIGADORES");
+    prueba("Insertar 2 validos");
     insertarInvestigador(1, "Ana Mora", buscarUniversidad(2), "Costa Rica", buscarArea(1), "ana@tec.ac.cr", 0);
     insertarInvestigador(2, "Luis Rojas", buscarUniversidad(4), "Mexico", buscarArea(2), "luis@unam.mx", 0);
-    insertarInvestigador(1, "Repetido", buscarUniversidad(2), "Peru", buscarArea(1), "r@x.com", 0);  // error: ID repetido
-    insertarInvestigador(3, "Sin Uni", buscarUniversidad(99), "Peru", buscarArea(1), "s@x.com", 0);  // error: universidad no existe
+    prueba("ID repetido (debe dar error)");
+    insertarInvestigador(1, "Repetido", buscarUniversidad(2), "Peru", buscarArea(1), "r@x.com", 0);
+    prueba("Universidad que no existe (debe dar error)");
+    insertarInvestigador(3, "Sin Uni", buscarUniversidad(99), "Peru", buscarArea(1), "s@x.com", 0);
+    prueba("Area que no existe (debe dar error)");
+    insertarInvestigador(3, "Sin Area", buscarUniversidad(2), "Peru", buscarArea(99), "s@x.com", 0);
+    prueba("Correo invalido (debe dar error)");
+    insertarInvestigador(3, "Mal Correo", buscarUniversidad(2), "Peru", buscarArea(1), "correo.com", 0);
+    prueba("Lista actual");
     mostrarInvestigadores();
-    mostrarInvestigador(buscarInvestigador(99));   // "Investigador no encontrado."
-    //prueba de coautores
+    prueba("Buscar ID 99 (no existe)");
+    mostrarInvestigador(buscarInvestigador(99));
+
+    // ---------------- COAUTORES ----------------
+    titulo("PRUEBA DE COAUTORES");
+    prueba("Insertar 2 validos al investigador 1 y 1 al investigador 2");
     insertarCoautor(buscarInvestigador(1), 1, "Pedro Soto", "UCR", 3);
     insertarCoautor(buscarInvestigador(1), 2, "Marta Diaz", "UNAM", 5);
-    insertarCoautor(buscarInvestigador(1), 2, "Repetido", "UCR", 1);   // error: ID repetido
-    insertarCoautor(buscarInvestigador(99), 3, "X", "UCR", 1);         // error: investigador no existe
+    insertarCoautor(buscarInvestigador(2), 3, "Raul Vega", "MIT", 1);
+    prueba("ID repetido en el mismo investigador (debe dar error)");
+    insertarCoautor(buscarInvestigador(1), 2, "Repetido", "UCR", 1);
+    prueba("ID repetido en otro investigador (debe dar error)");
+    insertarCoautor(buscarInvestigador(2), 1, "Repetido otro", "UCR", 1);
+    prueba("Investigador que no existe (debe dar error)");
+    insertarCoautor(buscarInvestigador(99), 4, "X", "UCR", 1);
+    prueba("Coautores del investigador 1 y del 2");
     mostrarCoautores(buscarInvestigador(1));
+    mostrarCoautores(buscarInvestigador(2));
+    prueba("Buscar coautor 2 del investigador 1, y coautor 3 en el investigador 1 (no esta ahi)");
     mostrarCoautor(buscarCoautor(buscarInvestigador(1), 2));
-    
+    mostrarCoautor(buscarCoautor(buscarInvestigador(1), 3));
+
+    // ---------------- ELIMINAR CON DEPENDENCIAS ----------------
+    titulo("PRUEBA DE ELIMINAR CON INVESTIGADORES ASOCIADOS");
+    prueba("Eliminar UCR (ID 2), a la que pertenece Ana (debe dar error)");
+    eliminarUniversidad(2);
+    mostrarUniversidades();
+
     return 0;
 }
