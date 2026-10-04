@@ -32,7 +32,10 @@ struct coautor;
 struct citacion;
 struct proyecto;
 struct universidad;
-//dd
+struct pubInvestigador;
+struct pubRevista;
+struct coautorPublicacion;
+//dd            
 
 // ============================================================
 //  LISTAS SIMPLES 
@@ -152,6 +155,49 @@ struct universidad {
     universidad* sig;
     universidad* ant;
 }*primeraUniversidad;
+struct pubInvestigador {
+    publicacion* laPublicacion;
+    pubInvestigador* sig;
+    pubInvestigador* ant;
+};
+
+struct pubRevista {
+    publicacion* laPublicacion;
+    pubRevista* sig;
+    pubRevista* ant;
+};
+
+struct coautorPublicacion {
+    coautor* elCoautor;
+    coautorPublicacion* sig;
+    coautorPublicacion* ant;
+};
+
+
+//---------------------------------------------Parte de Mainor------------------------------------------------------
+//insertar universidad
+// Buscar por ID. Devuelve NULL si no existe (la usa también investigador)
+universidad* buscarUniversidad(int id){
+    
+
+};
+
+// Inserta al final de la lista doble. Valida y comprueba que el ID sea único
+bool insertarUniversidad(int id, string nombre, string pais, int ranking);
+
+// Muestra todas las universidades
+void mostrarUniversidades();
+
+// Muestra una sola (útil para reportes)
+void mostrarUniversidad(universidad* uni);
+
+// Modifica nombre, país y ranking de una universidad (la elegida por A para las 3 modificaciones)
+bool modificarUniversidad(int id, string nombre, string pais, int ranking);
+
+// Elimina por ID (es la eliminación en lista doble)
+bool eliminarUniversidad(int id);
+
+// -----------------------------------------------------------------------------------------------------------------
 
 
 int main() {
