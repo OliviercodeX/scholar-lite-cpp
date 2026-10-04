@@ -32,13 +32,7 @@ struct coautor;
 struct citacion;
 struct proyecto;
 struct universidad;
-struct pubInvestigador;
-struct pubRevista;
-struct coautorPublicacion;
-//dd            
-
-
-//Gerald Andres xd
+//dd
 
 // ============================================================
 //  LISTAS SIMPLES 
@@ -158,53 +152,6 @@ struct universidad {
     universidad* sig;
     universidad* ant;
 }*primeraUniversidad;
-struct pubInvestigador {
-    publicacion* laPublicacion;
-    pubInvestigador* sig;
-    pubInvestigador* ant;
-};
-
-struct pubRevista {
-    publicacion* laPublicacion;
-    pubRevista* sig;
-    pubRevista* ant;
-};
-
-struct coautorPublicacion {
-    coautor* elCoautor;
-    coautorPublicacion* sig;
-    coautorPublicacion* ant;
-};
-
-
-//---------------------------------------------Parte de Mainor------------------------------------------------------
-//insertar universidad
-// Buscar por ID. Devuelve NULL si no existe (la usa también investigador)
-universidad* buscarUniversidad(int id){
-    
-
-};
-
-// Inserta al final de la lista doble. Valida y comprueba que el ID sea único
-bool insertarUniversidad(int id, string nombre, string pais, int ranking);
-
-// Muestra todas las universidades
-void mostrarUniversidades();
-
-// Muestra una sola (útil para reportes)
-void mostrarUniversidad(universidad* uni);
-
-// Modifica nombre, país y ranking de una universidad (la elegida por A para las 3 modificaciones)
-bool modificarUniversidad(int id, string nombre, string pais, int ranking);
-
-// Elimina por ID (es la eliminación en lista doble)
-bool eliminarUniversidad(int id);
-
-// -----------------------------------------------------------------------------------------------------------------
-
-
-
-
 
 
 int main() {
@@ -216,6 +163,26 @@ int main() {
     primerProyecto = NULL;
     primeraUniversidad = NULL;
 
-    cout << "Sistema de Gestion de Produccion Cientifica" << endl;
+    cout << "|->->->->->->->->Sistema de Gestion de Produccion Cientifica<-<-<-<-<-<-<-<-<-" << endl;
+    insertarUniversidad(1, "ITCR", "Costa Rica", 15);
+    insertarUniversidad(2, "UCR", "Costa Rica", 10);
+    insertarUniversidad(4, "Harvard", "Estados Unidos", 1);
+    insertarUniversidad(1, "Repetida", "Peru", 3);   // debe dar error de ID repetido
+    insertarUniversidad(3, "", "Mexico", 5);          // debe dar error de nombre vacio
+    mostrarUniversidades();
+    eliminarUniversidad(1);       // primero
+    eliminarUniversidad(99);      // error: no existe
+    mostrarUniversidades();
+
+
+    cout << "Prueba de areas" << endl;
+    insertarArea(1, "Ciberseguridad", "Proteccion de sistemas y datos");
+    insertarArea(2, "Inteligencia Artificial", "Aprendizaje automatico y agentes");
+    insertarArea(1, "Repetida", "Prueba de ID repetido");   // error: ID repetido
+    insertarArea(3, "", "Prueba de nombre vacio");           // error: nombre vacio
+    mostrarAreas();
+    mostrarArea(buscarArea(2));
+    mostrarArea(buscarArea(99));    
+    
     return 0;
 }
