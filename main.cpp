@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string> 
 using namespace std;
 //Mainor Olivier Martinez Sanchez
 // Gerald Andres Soto Esquivel
@@ -63,7 +64,7 @@ struct revista {
     string editorial;
     string pais;
     float factorImpacto;
-    char cuartil;                    // 'Q1','Q2','Q3','Q4' -> usar char o string
+    string cuartil;                    // 'Q1','Q2','Q3','Q4' -> usar char o string
     pubRevista* publicaciones;
 
     revista* sig;
@@ -176,28 +177,339 @@ struct coautorPublicacion {
 
 //---------------------------------------------Parte de Mainor------------------------------------------------------
 //insertar universidad
-// Buscar por ID. Devuelve NULL si no existe (la usa también investigador)
-universidad* buscarUniversidad(int id){
-    
+// Busca una universidad por ID. Devuelve NULL si no existe.
+universidad* buscarUniversidad(int id) {
+    universidad* aux = primeraUniversidad;
+    while (aux != NULL) {
+        if (aux->idUniversidad == id)
+            return aux;
+        aux = aux->sig;
+    }
+    return NULL;
+}
 
-};
+// Inserta al final de la lista doble. Valida y comprueba que el ID sea unico.
+// Devuelve true si se inserto, false si fallo una validacion.
+bool insertarUniversidad(int id, string nombre, string pais, int ranking) {
+    // Validaciones
+    if (id <= 0) {
+        cout << "Error: el ID debe ser mayor que 0." << endl;
+        return false;
+    }
+    if (buscarUniversidad(id) != NULL) {
+        cout << "Error: ya existe una universidad con ese ID." << endl;
+        return false;
+    }
+    if (nombre == "" || pais == "") {
+        cout << "Error: nombre y pais no pueden estar vacios." << endl;
+        return false;
+    }
+    if (ranking <= 0) {
+        cout << "Error: el ranking debe ser mayor que 0." << endl;
+        return false;
+    }
 
-// Inserta al final de la lista doble. Valida y comprueba que el ID sea único
-bool insertarUniversidad(int id, string nombre, string pais, int ranking);
+    // Crear nodo
+    universidad* nueva = new universidad;
+    nueva->idUniversidad = id;
+    nueva->nombre = nombre;
+    nueva->pais = pais;
+    nueva->ranking = ranking;
+    nueva->sig = NULL;
+    nueva->ant = NULL;
 
-// Muestra todas las universidades
-void mostrarUniversidades();
+    // Insertar al final
+    if (primeraUniversidad == NULL) {
+        primeraUniversidad = nueva;
+    } else {
+        universidad* aux = primeraUniversidad;
+        while (aux->sig != NULL)
+            aux = aux->sig;
+        aux->sig = nueva;
+        nueva->ant = aux;    // enlace hacia atras, lo que la hace doble
+    }
+    return true;
+}
+
+
 
 // Muestra una sola (útil para reportes)
-void mostrarUniversidad(universidad* uni);
+// Muestra los datos de una sola universidad
+void mostrarUniversidad(universidad* uni) {
+    if (uni == NULL) {
+        cout << "Universidad no encontrada." << endl;
+        return;
+    }
+    cout << "ID: " << uni->idUniversidad
+         << " | Nombre: " << uni->nombre
+         << " | Pais: " << uni->pais
+         << " | Ranking: " << uni->ranking << endl;
+}
+// Muestra todas las universidades (para probar)
+void mostrarUniversidades() {
+    if (primeraUniversidad == NULL) {
+        cout << "No hay universidades registradas." << endl;
+        return;
+    }
+    universidad* aux = primeraUniversidad;
+    while (aux != NULL) {
+        mostrarUniversidad(aux);
+        aux = aux->sig;
+    }
+}
+// Valida los datos de una universidad (se reutiliza al insertar y modificar)
+bool validarDatosUniversidad(string nombre, string pais, int ranking) {
+    if (nombre == "" || pais == "") {
+        cout << "Error: nombre y pais no pueden estar vacios." << endl;
+        return false;
+    }
+    if (ranking <= 0) {
+        cout << "Error: el ranking debe ser mayor que 0." << endl;
+        return false;
+    }
+    return true;
+}
 
-// Modifica nombre, país y ranking de una universidad (la elegida por A para las 3 modificaciones)
-bool modificarUniversidad(int id, string nombre, string pais, int ranking);
+// Modifica nombre, pais y ranking de una universidad
+bool modificarUniversidad(int id, string nombre, string pais, int ranking) {
+    universidad* uni = buscarUniversidad(id);
+    if (uni == NULL) {
+        cout << "Error: no existe una universidad con ese ID." << endl;
+        return false;
+    }
+    if (!validarDatosUniversidad(nombre, pais, ranking))
+        return false;
 
-// Elimina por ID (es la eliminación en lista doble)
-bool eliminarUniversidad(int id);
+    uni->nombre = nombre;
+    uni->pais = pais;
+    uni->ranking = ranking;
+    return true;
+}
 
+// Elimina una universidad por ID (lista doble)
+bool eliminarUniversidad(int id) {
+    universidad* uni = buscarUniversidad(id);
+    if (uni == NULL) {
+        cout << "Error: no existe una universidad con ese ID." << endl;
+        return false;
+    }
+
+    // No eliminar si algun investigador pertenece a ella (evita punteros colgantes)
+    investigador* inv = primerInvestigador;
+    while (inv != NULL) {
+        if (inv->suUniversidad == uni) {
+            cout << "Error: hay investigadores asociados a esta universidad." << endl;
+            return false;
+        }
+        inv = inv->sig;
+    }
+
+    // Reconectar vecinos
+    if (uni->ant == NULL)                 // es el primero
+        primeraUniversidad = uni->sig;
+    else
+        uni->ant->sig = uni->sig;
+
+    if (uni->sig != NULL)                 // no es el ultimo
+        uni->sig->ant = uni->ant;
+
+    delete uni;
+    return true;
+}
+//
+
+//---------------------------------------------Areas de investigacion---------------------------------------------
+
+// Busca un area por ID. Devuelve NULL si no existe.
+areaInvestigacion* buscarArea(int id) {
+    areaInvestigacion* aux = primeraArea;
+    while (aux != NULL) {
+        if (aux->idArea == id)
+            return aux;
+        aux = aux->sig;
+    }
+    return NULL;
+}
+
+// Inserta al final de la lista simple. Valida y comprueba que el ID sea unico.
+// Devuelve true si se inserto, false si fallo una validacion.
+bool insertarArea(int id, string nombre, string descripcion) {
+    // Validaciones
+    if (id <= 0) {
+        cout << "Error: el ID debe ser mayor que 0." << endl;
+        return false;
+    }
+    if (buscarArea(id) != NULL) {
+        cout << "Error: ya existe un area con ese ID." << endl;
+        return false;
+    }
+    if (nombre == "" || descripcion == "") {
+        cout << "Error: nombre y descripcion no pueden estar vacios." << endl;
+        return false;
+    }
+
+    // Crear nodo
+    areaInvestigacion* nueva = new areaInvestigacion;
+    nueva->idArea = id;
+    nueva->nombreArea = nombre;
+    nueva->descripcion = descripcion;
+    nueva->sig = NULL;
+
+    // Insertar al final
+    if (primeraArea == NULL) {
+        primeraArea = nueva;
+    } else {
+        areaInvestigacion* aux = primeraArea;
+        while (aux->sig != NULL)
+            aux = aux->sig;
+        aux->sig = nueva;
+    }
+    return true;
+}
+
+// Muestra los datos de una sola area
+void mostrarArea(areaInvestigacion* area) {
+    if (area == NULL) {
+        cout << "Area no encontrada." << endl;
+        return;
+    }
+    cout << "ID: " << area->idArea
+         << " | Area: " << area->nombreArea
+         << " | Descripcion: " << area->descripcion << endl;
+}
+
+// Muestra todas las areas
+void mostrarAreas() {
+    if (primeraArea == NULL) {
+        cout << "No hay areas de investigacion registradas." << endl;
+        return;
+    }
+    areaInvestigacion* aux = primeraArea;
+    while (aux != NULL) {
+        mostrarArea(aux);
+        aux = aux->sig;
+    }
+}
 // -----------------------------------------------------------------------------------------------------------------
+
+
+//---------------------------------------------Parte de Gerald - Revistas---------------------------------------------
+
+revista* buscarRevista(int id) {
+    revista* aux = primeraRevista;
+
+    while (aux != NULL) {
+        if (aux->idRevista == id) {
+            return aux;
+        }
+
+        aux = aux->sig;
+    }
+
+    return NULL;
+}
+
+
+bool insertarRevista(int id, string nombre, string editorial,
+                     string pais, float factorImpacto, string cuartil) {
+
+    if (id <= 0) {
+        cout << "Error: el ID debe ser mayor que 0." << endl;
+        return false;
+    }
+
+    if (buscarRevista(id) != NULL) {
+        cout << "Error: ya existe una revista con ese ID." << endl;
+        return false;
+    }
+
+    if (nombre == "" || editorial == "" || pais == "") {
+        cout << "Error: nombre, editorial y pais no pueden estar vacios." << endl;
+        return false;
+    }
+
+    if (factorImpacto < 0) {
+        cout << "Error: el factor de impacto no puede ser negativo." << endl;
+        return false;
+    }
+
+    if (cuartil != "Q1" &&
+        cuartil != "Q2" &&
+        cuartil != "Q3" &&
+        cuartil != "Q4") {
+
+        cout << "Error: el cuartil debe ser Q1, Q2, Q3 o Q4." << endl;
+        return false;
+    }
+
+    revista* nueva = new revista;
+
+    nueva->idRevista = id;
+    nueva->nombre = nombre;
+    nueva->editorial = editorial;
+    nueva->pais = pais;
+    nueva->factorImpacto = factorImpacto;
+    nueva->cuartil = cuartil;
+    nueva->publicaciones = NULL;
+    nueva->sig = NULL;
+
+    if (primeraRevista == NULL) {
+        primeraRevista = nueva;
+        return true;
+    }
+
+    if (nombre < primeraRevista->nombre) {
+        nueva->sig = primeraRevista;
+        primeraRevista = nueva;
+        return true;
+    }
+
+    revista* aux = primeraRevista;
+
+    while (aux->sig != NULL &&
+           aux->sig->nombre < nombre) {
+
+        aux = aux->sig;
+    }
+
+    nueva->sig = aux->sig;
+    aux->sig = nueva;
+
+    return true;
+}
+
+
+void mostrarRevista(revista* rev) {
+    if (rev == NULL) {
+        cout << "Revista no encontrada." << endl;
+        return;
+    }
+
+    cout << "ID: " << rev->idRevista
+         << " | Nombre: " << rev->nombre
+         << " | Editorial: " << rev->editorial
+         << " | Pais: " << rev->pais
+         << " | Factor de impacto: " << rev->factorImpacto
+         << " | Cuartil: " << rev->cuartil
+         << endl;
+}
+
+
+void mostrarRevistas() {
+    if (primeraRevista == NULL) {
+        cout << "No hay revistas registradas." << endl;
+        return;
+    }
+
+    revista* aux = primeraRevista;
+
+    while (aux != NULL) {
+        mostrarRevista(aux);
+        aux = aux->sig;
+    }
+
+}
+//----------------------------------------------------------------------------------------------------------------------
 
 
 int main() {
@@ -228,7 +540,21 @@ int main() {
     insertarArea(3, "", "Prueba de nombre vacio");           // error: nombre vacio
     mostrarAreas();
     mostrarArea(buscarArea(2));
-    mostrarArea(buscarArea(99));    
+    mostrarArea(buscarArea(99));   
+    
+    cout << endl;
+    cout << "Prueba de revistas" << endl;
+
+    insertarRevista(1, "Nature", "Springer Nature",
+                    "Reino Unido", 64.8, "Q1");
+
+    insertarRevista(2, "ACM Computing Surveys", "ACM",
+                    "Estados Unidos", 16.6, "Q1");
+
+    insertarRevista(3, "IEEE Access", "IEEE",
+                    "Estados Unidos", 3.9, "Q1");
+
+    mostrarRevistas();
     
     return 0;
 }
