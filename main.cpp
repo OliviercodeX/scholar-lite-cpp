@@ -710,6 +710,6 @@ int main() {
     prueba("Eliminar UCR (ID 2), a la que pertenece Ana (debe dar error)");
     eliminarUniversidad(2);
     mostrarUniversidades();
-
+//#todo revisar el estado del codigo actual 
     return 0;
 }
