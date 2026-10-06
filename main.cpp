@@ -601,6 +601,81 @@ void mostrarCoautores(investigador* inv) {
     }
 }
 //
+//---------------------------------------------Sublista pubInvestigador---------------------------------------------
+
+// Busca una publicacion por ID dentro de la sublista de un investigador.
+// Devuelve el puntero a la publicacion, o NULL si no la tiene (o si inv es NULL).
+publicacion* buscarPubInvestigador(investigador* inv, int idPublicacion) {
+    if (inv == NULL)
+        return NULL;
+    pubInvestigador* aux = inv->publicaciones;
+    while (aux != NULL) {
+        if (aux->laPublicacion->idPublicacion == idPublicacion)
+            return aux->laPublicacion;
+        aux = aux->sig;
+    }
+    return NULL;
+}
+
+// Agrega una publicacion a la sublista doble de un investigador (al final).
+// Es la funcion que llama B desde insertarPublicacion.
+// Devuelve true si se agrego, false si fallo una validacion.
+bool agregarPublicacionAInvestigador(investigador* inv, publicacion* pub) {
+    // Validaciones
+    if (inv == NULL) {
+        cout << "Error: el investigador no existe." << endl;
+        return false;
+    }
+    if (pub == NULL) {
+        cout << "Error: la publicacion no existe." << endl;
+        return false;
+    }
+    if (buscarPubInvestigador(inv, pub->idPublicacion) != NULL) {
+        cout << "Error: el investigador ya tiene esa publicacion." << endl;
+        return false;
+    }
+
+    // Crear nodo de enlace (solo guarda el puntero, no copia datos)
+    pubInvestigador* nuevo = new pubInvestigador;
+    nuevo->laPublicacion = pub;
+    nuevo->sig = NULL;
+    nuevo->ant = NULL;
+
+    // Insertar al final de la sublista
+    if (inv->publicaciones == NULL) {
+        inv->publicaciones = nuevo;
+    } else {
+        pubInvestigador* aux = inv->publicaciones;
+        while (aux->sig != NULL)
+            aux = aux->sig;
+        aux->sig = nuevo;
+        nuevo->ant = aux;
+    }
+    return true;
+}
+
+// Muestra todas las publicaciones de un investigador
+void mostrarPublicacionesInvestigador(investigador* inv) {
+    if (inv == NULL) {
+        cout << "Investigador no encontrado." << endl;
+        return;
+    }
+    if (inv->publicaciones == NULL) {
+        cout << inv->nombreCompleto << " no tiene publicaciones registradas." << endl;
+        return;
+    }
+    cout << "Publicaciones de " << inv->nombreCompleto << ":" << endl;
+    pubInvestigador* aux = inv->publicaciones;
+    while (aux != NULL) {
+        publicacion* p = aux->laPublicacion;
+        cout << "ID: " << p->idPublicacion
+             << " | Titulo: " << p->titulo
+             << " | Anio: " << p->anio
+             << " | Tipo: " << p->tipo
+             << " | Citas: " << p->cantidadCitas << endl;
+        aux = aux->sig;
+    }
+}
 // -----------------------------------------------------------------------------------------------------------------
 //---------------------------------------------Parte de Gerald - Revistas---------------------------------------------
 
