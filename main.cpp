@@ -676,6 +676,53 @@ void mostrarPublicacionesInvestigador(investigador* inv) {
         aux = aux->sig;
     }
 }
+
+//---------------------------------------------Precarga de datos de A---------------------------------------------
+
+void precargarUniversidades() {
+    insertarUniversidad(1, "ITCR", "Costa Rica", 15);
+    insertarUniversidad(2, "UCR", "Costa Rica", 10);
+    insertarUniversidad(3, "UNAM", "Mexico", 5);
+    insertarUniversidad(4, "Harvard", "Estados Unidos", 1);
+    insertarUniversidad(5, "MIT", "Estados Unidos", 2);
+}
+
+void precargarAreas() {
+    insertarArea(1, "Ciberseguridad", "Proteccion de sistemas, redes y datos");
+    insertarArea(2, "Inteligencia Artificial", "Aprendizaje automatico y agentes");
+    insertarArea(3, "Redes de Computadoras", "Diseno y analisis de redes");
+    insertarArea(4, "Bioinformatica", "Analisis computacional de datos biologicos");
+    insertarArea(5, "Ingenieria de Software", "Procesos y calidad del software");
+}
+
+void precargarInvestigadores() {
+    insertarInvestigador(1, "Ana Mora", buscarUniversidad(1), "Costa Rica", buscarArea(1), "ana.mora@tec.ac.cr", 0);
+    insertarInvestigador(2, "Luis Rojas", buscarUniversidad(3), "Mexico", buscarArea(2), "luis.rojas@unam.mx", 0);
+    insertarInvestigador(3, "Maria Vargas", buscarUniversidad(2), "Costa Rica", buscarArea(3), "maria.vargas@ucr.ac.cr", 0);
+    insertarInvestigador(4, "Carlos Nunez", buscarUniversidad(4), "Estados Unidos", buscarArea(1), "carlos.nunez@harvard.edu", 0);
+    insertarInvestigador(5, "Sofia Leiva", buscarUniversidad(5), "Estados Unidos", buscarArea(4), "sofia.leiva@mit.edu", 0);
+}
+
+void precargarCoautores() {
+    insertarCoautor(buscarInvestigador(1), 1, "Pedro Soto", "UCR", 3);
+    insertarCoautor(buscarInvestigador(1), 2, "Marta Diaz", "UNAM", 5);
+    insertarCoautor(buscarInvestigador(2), 3, "Raul Vega", "MIT", 1);
+    insertarCoautor(buscarInvestigador(2), 4, "Elena Cruz", "USP", 2);
+    insertarCoautor(buscarInvestigador(3), 5, "Jorge Salas", "ITCR", 4);
+    insertarCoautor(buscarInvestigador(3), 6, "Laura Pineda", "UCR", 2);
+    insertarCoautor(buscarInvestigador(4), 7, "Diego Herrera", "Harvard", 3);
+    insertarCoautor(buscarInvestigador(4), 8, "Camila Ortiz", "UNAM", 1);
+    insertarCoautor(buscarInvestigador(5), 9, "Andres Brenes", "ITCR", 6);
+    insertarCoautor(buscarInvestigador(5), 10, "Valeria Chaves", "MIT", 2);
+}
+
+// Carga todos los datos de A, en este orden porque cada lista depende de la anterior
+void precargarDatosA() {
+    precargarUniversidades();
+    precargarAreas();
+    precargarInvestigadores();
+    precargarCoautores();
+}
 // -----------------------------------------------------------------------------------------------------------------
 //---------------------------------------------Parte de Gerald - Revistas---------------------------------------------
 
@@ -920,6 +967,31 @@ int main() {
                     "Estados Unidos", 3.9, "Q1");
 
     mostrarRevistas();
+
+    titulo("PRUEBA DE SUBLISTA pubInvestigador");
+
+// TEMPORAL: publicaciones creadas a mano
+    publicacion* p1 = new publicacion;
+    p1->idPublicacion = 1; p1->titulo = "Redes seguras"; p1->anio = 2021;
+    p1->tipo = "Articulo"; p1->cantidadCitas = 25;
+
+    publicacion* p2 = new publicacion;
+    p2->idPublicacion = 2; p2->titulo = "Criptografia moderna"; p2->anio = 2022;
+    p2->tipo = "Libro"; p2->cantidadCitas = 18;
+
+    prueba("Agregar 2 publicaciones a Ana");
+    agregarPublicacionAInvestigador(buscarInvestigador(1), p1);
+    agregarPublicacionAInvestigador(buscarInvestigador(1), p2);
+    prueba("Publicacion repetida (debe dar error)");
+    agregarPublicacionAInvestigador(buscarInvestigador(1), p1);
+    prueba("Investigador que no existe (debe dar error)");
+    agregarPublicacionAInvestigador(buscarInvestigador(99), p1);
+    prueba("Publicaciones de Ana y de Luis (Luis no tiene)");
+    mostrarPublicacionesInvestigador(buscarInvestigador(1));
+    mostrarPublicacionesInvestigador(buscarInvestigador(2));
+    prueba("Buscar la publicacion 2 en Ana, y la 5 (no esta)");
+    cout << (buscarPubInvestigador(buscarInvestigador(1), 2) != NULL ? "Encontrada" : "No esta") << endl;
+    cout << (buscarPubInvestigador(buscarInvestigador(1), 5) != NULL ? "Encontrada" : "No esta") << endl;
 
     return 0;
 }
