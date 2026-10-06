@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string> 
 using namespace std;
 //Mainor Olivier Martinez Sanchez
 // Gerald Andres Soto Esquivel
@@ -63,7 +64,7 @@ struct revista {
     string editorial;
     string pais;
     float factorImpacto;
-    char cuartil;                    // 'Q1','Q2','Q3','Q4' -> usar char o string
+    string cuartil;                    // 'Q1','Q2','Q3','Q4' -> usar char o string
     pubRevista* publicaciones;
 
     revista* sig;
@@ -601,6 +602,125 @@ void mostrarCoautores(investigador* inv) {
 }
 
 // -----------------------------------------------------------------------------------------------------------------
+//---------------------------------------------Parte de Gerald - Revistas---------------------------------------------
+
+revista* buscarRevista(int id) {
+    revista* aux = primeraRevista;
+
+    while (aux != NULL) {
+        if (aux->idRevista == id) {
+            return aux;
+        }
+
+        aux = aux->sig;
+    }
+
+    return NULL;
+}
+
+
+bool insertarRevista(int id, string nombre, string editorial,
+                     string pais, float factorImpacto, string cuartil) {
+
+    if (id <= 0) {
+        cout << "Error: el ID debe ser mayor que 0." << endl;
+        return false;
+    }
+
+    if (buscarRevista(id) != NULL) {
+        cout << "Error: ya existe una revista con ese ID." << endl;
+        return false;
+    }
+
+    if (nombre == "" || editorial == "" || pais == "") {
+        cout << "Error: nombre, editorial y pais no pueden estar vacios." << endl;
+        return false;
+    }
+
+    if (factorImpacto < 0) {
+        cout << "Error: el factor de impacto no puede ser negativo." << endl;
+        return false;
+    }
+
+    if (cuartil != "Q1" &&
+        cuartil != "Q2" &&
+        cuartil != "Q3" &&
+        cuartil != "Q4") {
+
+        cout << "Error: el cuartil debe ser Q1, Q2, Q3 o Q4." << endl;
+        return false;
+    }
+
+    revista* nueva = new revista;
+
+    nueva->idRevista = id;
+    nueva->nombre = nombre;
+    nueva->editorial = editorial;
+    nueva->pais = pais;
+    nueva->factorImpacto = factorImpacto;
+    nueva->cuartil = cuartil;
+    nueva->publicaciones = NULL;
+    nueva->sig = NULL;
+
+    if (primeraRevista == NULL) {
+        primeraRevista = nueva;
+        return true;
+    }
+
+    if (nombre < primeraRevista->nombre) {
+        nueva->sig = primeraRevista;
+        primeraRevista = nueva;
+        return true;
+    }
+
+    revista* aux = primeraRevista;
+
+    while (aux->sig != NULL &&
+           aux->sig->nombre < nombre) {
+
+        aux = aux->sig;
+    }
+
+    nueva->sig = aux->sig;
+    aux->sig = nueva;
+
+    return true;
+}
+
+
+void mostrarRevista(revista* rev) {
+    if (rev == NULL) {
+        cout << "Revista no encontrada." << endl;
+        return;
+    }
+
+    cout << "ID: " << rev->idRevista
+         << " | Nombre: " << rev->nombre
+         << " | Editorial: " << rev->editorial
+         << " | Pais: " << rev->pais
+         << " | Factor de impacto: " << rev->factorImpacto
+         << " | Cuartil: " << rev->cuartil
+         << endl;
+}
+
+
+void mostrarRevistas() {
+    if (primeraRevista == NULL) {
+        cout << "No hay revistas registradas." << endl;
+        return;
+    }
+
+    revista* aux = primeraRevista;
+
+    while (aux != NULL) {
+        mostrarRevista(aux);
+        aux = aux->sig;
+    }
+
+}
+//----------------------------------------------------------------------------------------------------------------------
+
+
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //------------------------------------------------------------------------------------------------------------------
 
@@ -610,8 +730,7 @@ void titulo(string texto) {
 }
 
 void prueba(string texto) {
-    cout << "-> " << texto << endl;
-}
+    cout << "-> " << texto << endl;}
 
 int main() {
     // Al arrancar, todas las listas principales estan vacias
@@ -710,6 +829,22 @@ int main() {
     prueba("Eliminar UCR (ID 2), a la que pertenece Ana (debe dar error)");
     eliminarUniversidad(2);
     mostrarUniversidades();
-//#todo revisar el estado del codigo actual 
+    
+      mostrarArea(buscarArea(99));   
+    
+    cout << endl;
+    cout << "Prueba de revistas" << endl;
+
+    insertarRevista(1, "Nature", "Springer Nature",
+                    "Reino Unido", 64.8, "Q1");
+
+    insertarRevista(2, "ACM Computing Surveys", "ACM",
+                    "Estados Unidos", 16.6, "Q1");
+
+    insertarRevista(3, "IEEE Access", "IEEE",
+                    "Estados Unidos", 3.9, "Q1");
+
+    mostrarRevistas();
+
     return 0;
 }
