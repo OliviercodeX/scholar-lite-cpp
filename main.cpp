@@ -810,6 +810,88 @@ void mostrarPublicacionesInvestigador(investigador* inv) {
     }
 }
 
+//---------------------------------------------Metricas academicas---------------------------------------------
+
+// Cantidad de publicaciones de un investigador (produccion cientifica)
+int contarPublicaciones(investigador* inv) {
+    int total = 0;
+    pubInvestigador* p = inv->publicaciones;
+    while (p != NULL) {
+        total++;
+        p = p->sig;
+    }
+    return total;
+}
+
+// Suma de las citas de todas sus publicaciones
+int calcularTotalCitas(investigador* inv) {
+    int total = 0;
+    pubInvestigador* p = inv->publicaciones;
+    while (p != NULL) {
+        total += p->laPublicacion->cantidadCitas;
+        p = p->sig;
+    }
+    return total;
+}
+
+// Cantidad de coautores de su sublista (colaboracion cientifica)
+int contarCoautores(investigador* inv) {
+    int total = 0;
+    coautor* c = inv->coautores;
+    while (c != NULL) {
+        total++;
+        c = c->sig;
+    }
+    return total;
+}
+
+// Indice H: el mayor k tal que hay k publicaciones con al menos k citas
+int calcularIndiceH(investigador* inv) {
+    int totalPub = contarPublicaciones(inv);
+    int h = 0;
+    for (int k = 1; k <= totalPub; k++) {
+        int cuantas = 0;
+        pubInvestigador* p = inv->publicaciones;
+        while (p != NULL) {
+            if (p->laPublicacion->cantidadCitas >= k)
+                cuantas++;
+            p = p->sig;
+        }
+        if (cuantas >= k)
+            h = k;
+    }
+    return h;
+}
+
+// Guarda en cada investigador su indice H calculado (para consultas y reportes)
+void actualizarTodosLosIndicesH() {
+    investigador* inv = primerInvestigador;
+    while (inv != NULL) {
+        inv->indiceH = calcularIndiceH(inv);
+        inv = inv->sig;
+    }
+}
+
+// Muestra las 5 metricas de un investigador
+void mostrarMetricas(investigador* inv) {
+    if (inv == NULL) {
+        cout << "Investigador no encontrado." << endl;
+        return;
+    }
+    int totalPub = contarPublicaciones(inv);
+    int totalCitas = calcularTotalCitas(inv);
+    float promedio = 0;
+    if (totalPub > 0)                       // evita dividir entre cero
+        promedio = (float)totalCitas / totalPub;
+
+    cout << "Metricas de " << inv->nombreCompleto << endl;
+    cout << "   Indice H: " << calcularIndiceH(inv) << endl;
+    cout << "   Total de citas: " << totalCitas << endl;
+    cout << "   Promedio de citas por publicacion: " << promedio << endl;
+    cout << "   Coautores distintos: " << contarCoautores(inv) << endl;
+    cout << "   Produccion cientifica: " << totalPub << " publicaciones" << endl;
+}
+
 //---------------------------------------------Precarga de datos de A---------------------------------------------
 
 void precargarUniversidades() {
@@ -1138,6 +1220,28 @@ int main() {
     prueba("Universidad que no existe (debe dar error)");
     modificarInvestigador(1, "Ana", buscarUniversidad(99), "CR", buscarArea(1), "a@x.com");
     prueba("El investigador 1 debe seguir con los datos de la primera modificacion");
+    mostrarInvestigador(buscarInvestigador(1));
+
+    titulo("PRUEBA DE METRICAS");
+
+    // TEMPORAL: las 8 publicaciones del ejemplo del documento para Ana
+    int citas[8] = {25, 18, 12, 8, 5, 4, 2, 1};
+    for (int i = 0; i < 8; i++) {
+        publicacion* p = new publicacion;
+        p->idPublicacion = i + 1;
+        p->titulo = "Pub " + to_string(i + 1);
+        p->anio = 2020;
+        p->tipo = "Articulo";
+        p->cantidadCitas = citas[i];
+        agregarPublicacionAInvestigador(buscarInvestigador(1), p);
+    }
+
+    prueba("Metricas de Ana (con publicaciones)");
+    mostrarMetricas(buscarInvestigador(1));
+    prueba("Metricas de Maria (sin publicaciones, no debe fallar)");
+    mostrarMetricas(buscarInvestigador(3));
+    prueba("Actualizar el indice H guardado y mostrar");
+    actualizarTodosLosIndicesH();
     mostrarInvestigador(buscarInvestigador(1));
 
     return 0;
