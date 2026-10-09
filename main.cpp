@@ -496,6 +496,48 @@ void mostrarInvestigadores() {
         aux = aux->sig;
     }
 }
+
+// Valida los datos de un investigador (se reutiliza al modificar)
+bool validarDatosInvestigador(string nombre, string pais, string correo,
+                              universidad* uni, areaInvestigacion* area) {
+    if (nombre == "" || pais == "") {
+        cout << "Error: nombre y pais no pueden estar vacios." << endl;
+        return false;
+    }
+    if (correo.find('@') == string::npos || correo.find('.') == string::npos) {
+        cout << "Error: correo invalido." << endl;
+        return false;
+    }
+    if (uni == NULL) {
+        cout << "Error: la universidad no existe." << endl;
+        return false;
+    }
+    if (area == NULL) {
+        cout << "Error: el area de investigacion no existe." << endl;
+        return false;
+    }
+    return true;
+}
+
+// Modifica nombre, universidad, pais, area y correo de un investigador.
+// Devuelve true si se modifico, false si fallo una validacion.
+bool modificarInvestigador(int id, string nombre, universidad* uni, string pais,
+                           areaInvestigacion* area, string correo) {
+    investigador* inv = buscarInvestigador(id);
+    if (inv == NULL) {
+        cout << "Error: no existe un investigador con ese ID." << endl;
+        return false;
+    }
+    if (!validarDatosInvestigador(nombre, pais, correo, uni, area))
+        return false;
+
+    inv->nombreCompleto = nombre;
+    inv->suUniversidad = uni;
+    inv->pais = pais;
+    inv->suArea = area;
+    inv->correo = correo;
+    return true;
+}
 //---------------------------------------------Coautores---------------------------------------------
 
 // Busca un coautor por ID dentro de la sublista de un investigador.
@@ -601,6 +643,97 @@ void mostrarCoautores(investigador* inv) {
     }
 }
 //
+
+//---------------------------------------------Eliminar investigador---------------------------------------------
+
+// Revisa si otra estructura todavia apunta al investigador.
+// Devuelve true (y avisa por pantalla) si lo encuentra.
+bool investigadorTieneReferencias(investigador* inv) {
+    // Proyectos que lo tienen como responsable
+    proyecto* proy = primerProyecto;
+    while (proy != NULL) {
+        if (proy->investigadorResponsable == inv) {
+            cout << "Error: el investigador es responsable de un proyecto." << endl;
+            return true;
+        }
+        proy = proy->sig;
+    }
+
+    // Publicaciones (lista circular), sus citaciones y sus coautores
+    if (primeraPublicacion != NULL) {
+        publicacion* pub = primeraPublicacion;
+        do {
+            if (pub->investigadorPrincipal == inv) {
+                cout << "Error: el investigador es el principal de una publicacion." << endl;
+                return true;
+            }
+            citacion* cit = pub->citas;
+            while (cit != NULL) {
+                if (cit->autorCitante == inv) {
+                    cout << "Error: el investigador es autor citante en una citacion." << endl;
+                    return true;
+                }
+                cit = cit->sig;
+            }
+            coautorPublicacion* cp = pub->coautores;
+            while (cp != NULL) {
+                if (cp->elCoautor != NULL &&
+                    buscarCoautor(inv, cp->elCoautor->idCoautor) == cp->elCoautor) {
+                    cout << "Error: una publicacion usa coautores de este investigador." << endl;
+                    return true;
+                }
+                cp = cp->sig;
+            }
+            pub = pub->sig;
+        } while (pub != NULL && pub != primeraPublicacion);
+    }
+    return false;
+}
+
+// Elimina un investigador por ID (lista simple).
+// Devuelve true si se elimino, false si no existe o si todavia esta referenciado.
+bool eliminarInvestigador(int id) {
+    investigador* inv = buscarInvestigador(id);
+    if (inv == NULL) {
+        cout << "Error: no existe un investigador con ese ID." << endl;
+        return false;
+    }
+
+    // No eliminar si otra estructura todavia apunta a el (evita punteros colgantes)
+    if (investigadorTieneReferencias(inv))
+        return false;
+
+    // Desenlazar de la lista simple
+    if (primerInvestigador == inv) {          // es el primero
+        primerInvestigador = inv->sig;
+    } else {
+        investigador* ant = primerInvestigador;
+        while (ant->sig != inv)
+            ant = ant->sig;
+        ant->sig = inv->sig;
+    }
+
+    // Liberar su sublista de coautores
+    coautor* c = inv->coautores;
+    while (c != NULL) {
+        coautor* siguiente = c->sig;
+        delete c;
+        c = siguiente;
+    }
+
+    // Liberar los nodos de enlace de su sublista de publicaciones
+    // (solo los nodos de enlace, las publicaciones no se borran)
+    pubInvestigador* p = inv->publicaciones;
+    while (p != NULL) {
+        pubInvestigador* siguiente = p->sig;
+        delete p;
+        p = siguiente;
+    }
+
+    delete inv;
+    return true;
+}
+
 //---------------------------------------------Sublista pubInvestigador---------------------------------------------
 
 // Busca una publicacion por ID dentro de la sublista de un investigador.
@@ -992,6 +1125,20 @@ int main() {
     prueba("Buscar la publicacion 2 en Ana, y la 5 (no esta)");
     cout << (buscarPubInvestigador(buscarInvestigador(1), 2) != NULL ? "Encontrada" : "No esta") << endl;
     cout << (buscarPubInvestigador(buscarInvestigador(1), 5) != NULL ? "Encontrada" : "No esta") << endl;
+
+
+    titulo("PRUEBA DE MODIFICAR INVESTIGADOR");
+    prueba("Modificar el investigador 1 (valido)");
+    modificarInvestigador(1, "Ana Mora Salas", buscarUniversidad(2), "Costa Rica", buscarArea(2), "ana.salas@ucr.ac.cr");
+    mostrarInvestigador(buscarInvestigador(1));
+    prueba("ID que no existe (debe dar error)");
+    modificarInvestigador(99, "X", buscarUniversidad(1), "CR", buscarArea(1), "x@x.com");
+    prueba("Correo invalido (debe dar error)");
+    modificarInvestigador(1, "Ana", buscarUniversidad(1), "CR", buscarArea(1), "correo.com");
+    prueba("Universidad que no existe (debe dar error)");
+    modificarInvestigador(1, "Ana", buscarUniversidad(99), "CR", buscarArea(1), "a@x.com");
+    prueba("El investigador 1 debe seguir con los datos de la primera modificacion");
+    mostrarInvestigador(buscarInvestigador(1));
 
     return 0;
 }
