@@ -1054,7 +1054,1096 @@ void mostrarRevistas() {
         aux = aux->sig;
     }
 
+
+
 }
+
+
+//---------------------------------------------Modificar Revista---------------------------------------------
+
+bool modificarRevista(int id, string nombre, string editorial,
+                      string pais, float factorImpacto, string cuartil) {
+
+    // Buscar la revista
+    revista* rev = buscarRevista(id);
+
+    if (rev == NULL) {
+        cout << "Error: no existe una revista con ese ID." << endl;
+        return false;
+    }
+
+    // Validar textos
+    if (nombre == "" || editorial == "" || pais == "") {
+        cout << "Error: nombre, editorial y pais no pueden estar vacios." << endl;
+        return false;
+    }
+
+    // Validar factor de impacto
+    if (factorImpacto < 0) {
+        cout << "Error: el factor de impacto no puede ser negativo." << endl;
+        return false;
+    }
+
+    // Validar cuartil
+    if (cuartil != "Q1" &&
+        cuartil != "Q2" &&
+        cuartil != "Q3" &&
+        cuartil != "Q4") {
+
+        cout << "Error: el cuartil debe ser Q1, Q2, Q3 o Q4." << endl;
+        return false;
+    }
+
+
+    // Sacar temporalmente la revista de la lista
+    // porque el nombre puede cambiar y la lista debe seguir ordenada.
+
+    if (primeraRevista == rev) {
+
+        primeraRevista = rev->sig;
+
+    } else {
+
+        revista* anterior = primeraRevista;
+
+        while (anterior != NULL && anterior->sig != rev) {
+            anterior = anterior->sig;
+        }
+
+        if (anterior != NULL) {
+            anterior->sig = rev->sig;
+        }
+    }
+
+
+    // Modificar datos
+    rev->nombre = nombre;
+    rev->editorial = editorial;
+    rev->pais = pais;
+    rev->factorImpacto = factorImpacto;
+    rev->cuartil = cuartil;
+
+    rev->sig = NULL;
+
+
+    // Volver a insertar la revista ordenada por nombre
+
+    // Lista vacia o debe ir de primera
+    if (primeraRevista == NULL ||
+        rev->nombre < primeraRevista->nombre) {
+
+        rev->sig = primeraRevista;
+        primeraRevista = rev;
+
+        return true;
+    }
+
+
+    // Buscar posicion
+    revista* aux = primeraRevista;
+
+    while (aux->sig != NULL &&
+           aux->sig->nombre < rev->nombre) {
+
+        aux = aux->sig;
+    }
+
+    rev->sig = aux->sig;
+    aux->sig = rev;
+
+    return true;
+}
+
+    //---------------------------------------------Parte de Gerald - Proyectos---------------------------------------------
+
+// Busca un proyecto por ID. Devuelve NULL si no existe.
+proyecto* buscarProyecto(int id) {
+    proyecto* aux = primerProyecto;
+
+    while (aux != NULL) {
+        if (aux->idProyecto == id) {
+            return aux;
+        }
+
+        aux = aux->sig;
+    }
+
+    return NULL;
+}
+
+
+// Inserta un proyecto ordenado por anio de inicio.
+bool insertarProyecto(int id, string nombre, float financiamiento,
+                      int anioInicio, int anioFinalizacion,
+                      investigador* responsable) {
+
+    // Validar ID
+    if (id <= 0) {
+        cout << "Error: el ID debe ser mayor que 0." << endl;
+        return false;
+    }
+
+    // Evitar IDs repetidos
+    if (buscarProyecto(id) != NULL) {
+        cout << "Error: ya existe un proyecto con ese ID." << endl;
+        return false;
+    }
+
+    // Validar nombre
+    if (nombre == "") {
+        cout << "Error: el nombre del proyecto no puede estar vacio." << endl;
+        return false;
+    }
+
+    // Validar financiamiento
+    if (financiamiento < 0) {
+        cout << "Error: el financiamiento no puede ser negativo." << endl;
+        return false;
+    }
+
+    // Validar anios
+    if (anioInicio <= 0 || anioFinalizacion < anioInicio) {
+        cout << "Error: las fechas del proyecto no son validas." << endl;
+        return false;
+    }
+
+    // Validar investigador responsable
+    if (responsable == NULL) {
+        cout << "Error: el investigador responsable no existe." << endl;
+        return false;
+    }
+
+    // Crear nodo
+    proyecto* nuevo = new proyecto;
+
+    nuevo->idProyecto = id;
+    nuevo->nombre = nombre;
+    nuevo->financiamiento = financiamiento;
+    nuevo->anioInicio = anioInicio;
+    nuevo->anioFinalizacion = anioFinalizacion;
+    nuevo->investigadorResponsable = responsable;
+
+    nuevo->sig = NULL;
+    nuevo->ant = NULL;
+
+    // Caso 1: lista vacia
+    if (primerProyecto == NULL) {
+        primerProyecto = nuevo;
+        return true;
+    }
+
+    // Caso 2: insertar al inicio
+    if (anioInicio < primerProyecto->anioInicio) {
+        nuevo->sig = primerProyecto;
+        primerProyecto->ant = nuevo;
+        primerProyecto = nuevo;
+
+        return true;
+    }
+
+    // Caso 3: buscar la posicion correspondiente
+    proyecto* aux = primerProyecto;
+
+    while (aux->sig != NULL &&
+           aux->sig->anioInicio <= anioInicio) {
+
+        aux = aux->sig;
+    }
+
+    nuevo->sig = aux->sig;
+    nuevo->ant = aux;
+
+    if (aux->sig != NULL) {
+        aux->sig->ant = nuevo;
+    }
+
+    aux->sig = nuevo;
+
+    return true;
+}
+
+
+// Muestra un solo proyecto.
+void mostrarProyecto(proyecto* proy) {
+    if (proy == NULL) {
+        cout << "Proyecto no encontrado." << endl;
+        return;
+    }
+
+    cout << "ID: " << proy->idProyecto
+         << " | Nombre: " << proy->nombre
+         << " | Financiamiento: " << proy->financiamiento
+         << " | Inicio: " << proy->anioInicio
+         << " | Finalizacion: " << proy->anioFinalizacion
+         << " | Responsable: ";
+
+    if (proy->investigadorResponsable != NULL) {
+        cout << proy->investigadorResponsable->nombreCompleto;
+    } else {
+        cout << "(sin responsable)";
+    }
+
+    cout << endl;
+}
+
+
+// Muestra todos los proyectos.
+void mostrarProyectos() {
+    if (primerProyecto == NULL) {
+        cout << "No hay proyectos registrados." << endl;
+        return;
+    }
+
+    proyecto* aux = primerProyecto;
+
+    while (aux != NULL) {
+        mostrarProyecto(aux);
+        aux = aux->sig;
+    }
+
+
+    
+
+
+}
+
+
+//---------------------------------------------Parte de Gerald - Publicaciones---------------------------------------------
+
+// Busca una publicacion por ID en la lista circular.
+// Devuelve NULL si no existe.
+publicacion* buscarPublicacion(int id) {
+
+    if (primeraPublicacion == NULL) {
+        return NULL;
+    }
+
+    publicacion* aux = primeraPublicacion;
+
+    do {
+        if (aux->idPublicacion == id) {
+            return aux;
+        }
+
+        aux = aux->sig;
+
+    } while (aux != primeraPublicacion);
+
+    return NULL;
+}
+
+
+// Busca una publicacion dentro de la sublista de una revista.
+publicacion* buscarPubRevista(revista* rev, int idPublicacion) {
+
+    if (rev == NULL) {
+        return NULL;
+    }
+
+    pubRevista* aux = rev->publicaciones;
+
+    while (aux != NULL) {
+
+        if (aux->laPublicacion->idPublicacion == idPublicacion) {
+            return aux->laPublicacion;
+        }
+
+        aux = aux->sig;
+    }
+
+    return NULL;
+}
+
+
+// Agrega una publicacion a la sublista doble de una revista.
+bool agregarPublicacionARevista(revista* rev, publicacion* pub) {
+
+    if (rev == NULL) {
+        cout << "Error: la revista no existe." << endl;
+        return false;
+    }
+
+    if (pub == NULL) {
+        cout << "Error: la publicacion no existe." << endl;
+        return false;
+    }
+
+    if (buscarPubRevista(rev, pub->idPublicacion) != NULL) {
+        cout << "Error: la revista ya tiene esa publicacion." << endl;
+        return false;
+    }
+
+    pubRevista* nuevo = new pubRevista;
+
+    nuevo->laPublicacion = pub;
+    nuevo->sig = NULL;
+    nuevo->ant = NULL;
+
+    if (rev->publicaciones == NULL) {
+
+        rev->publicaciones = nuevo;
+
+    } else {
+
+        pubRevista* aux = rev->publicaciones;
+
+        while (aux->sig != NULL) {
+            aux = aux->sig;
+        }
+
+        aux->sig = nuevo;
+        nuevo->ant = aux;
+    }
+
+    return true;
+}
+
+
+// Inserta una publicacion ordenada por anio en la lista circular.
+bool insertarPublicacion(int id, string titulo, int anio,
+                         string tipo, int cantidadCitas, string doi,
+                         investigador* investigadorPrincipal,
+                         revista* rev,
+                         proyecto* proy) {
+
+    // Validar ID
+    if (id <= 0) {
+        cout << "Error: el ID debe ser mayor que 0." << endl;
+        return false;
+    }
+
+    // Evitar ID repetido en la lista principal
+    if (buscarPublicacion(id) != NULL) {
+        cout << "Error: ya existe una publicacion con ese ID." << endl;
+        return false;
+    }
+
+    // Validar titulo y DOI
+    if (titulo == "" || doi == "") {
+        cout << "Error: titulo y DOI no pueden estar vacios." << endl;
+        return false;
+    }
+
+    // Validar anio
+    if (anio <= 0) {
+        cout << "Error: el anio debe ser mayor que 0." << endl;
+        return false;
+    }
+
+    // Validar tipo
+    if (tipo != "Articulo" &&
+        tipo != "Libro" &&
+        tipo != "Conferencia") {
+
+        cout << "Error: el tipo debe ser Articulo, Libro o Conferencia." << endl;
+        return false;
+    }
+
+    // Validar citas
+    if (cantidadCitas < 0) {
+        cout << "Error: la cantidad de citas no puede ser negativa." << endl;
+        return false;
+    }
+
+    // Validar investigador
+    if (investigadorPrincipal == NULL) {
+        cout << "Error: el investigador principal no existe." << endl;
+        return false;
+    }
+
+    // Validar revista
+    if (rev == NULL) {
+        cout << "Error: la revista no existe." << endl;
+        return false;
+    }
+
+    // Validar proyecto
+    if (proy == NULL) {
+        cout << "Error: el proyecto no existe." << endl;
+        return false;
+    }
+
+    // Revisar que ese ID no este ya usado en las sublistas
+    if (buscarPubInvestigador(investigadorPrincipal, id) != NULL) {
+        cout << "Error: el investigador ya tiene una publicacion con ese ID." << endl;
+        return false;
+    }
+
+    if (buscarPubRevista(rev, id) != NULL) {
+        cout << "Error: la revista ya tiene una publicacion con ese ID." << endl;
+        return false;
+    }
+
+
+    // Crear nodo
+    publicacion* nueva = new publicacion;
+
+    nueva->idPublicacion = id;
+    nueva->titulo = titulo;
+    nueva->anio = anio;
+    nueva->tipo = tipo;
+    nueva->cantidadCitas = cantidadCitas;
+    nueva->doi = doi;
+
+    nueva->investigadorPrincipal = investigadorPrincipal;
+    nueva->suRevista = rev;
+    nueva->suProyecto = proy;
+
+    nueva->citas = NULL;
+    nueva->coautores = NULL;
+
+    // Por defecto se apunta a si misma.
+    // Esto permite crear correctamente la primera publicacion circular.
+    nueva->sig = nueva;
+
+
+    // CASO 1: lista vacia
+    if (primeraPublicacion == NULL) {
+
+        primeraPublicacion = nueva;
+    }
+
+    // CASO 2: debe convertirse en la primera
+    else if (anio < primeraPublicacion->anio) {
+
+        publicacion* ultimo = primeraPublicacion;
+
+        while (ultimo->sig != primeraPublicacion) {
+            ultimo = ultimo->sig;
+        }
+
+        nueva->sig = primeraPublicacion;
+        ultimo->sig = nueva;
+        primeraPublicacion = nueva;
+    }
+
+    // CASO 3: insertar en medio o al final
+    else {
+
+        publicacion* aux = primeraPublicacion;
+
+        while (aux->sig != primeraPublicacion &&
+               aux->sig->anio <= anio) {
+
+            aux = aux->sig;
+        }
+
+        nueva->sig = aux->sig;
+        aux->sig = nueva;
+    }
+
+
+    // Relacionar la publicacion con el investigador
+    agregarPublicacionAInvestigador(investigadorPrincipal, nueva);
+
+    // Relacionar la publicacion con la revista
+    agregarPublicacionARevista(rev, nueva);
+
+    return true;
+}
+
+
+// Muestra una sola publicacion.
+void mostrarPublicacion(publicacion* pub) {
+
+    if (pub == NULL) {
+        cout << "Publicacion no encontrada." << endl;
+        return;
+    }
+
+    cout << "ID: " << pub->idPublicacion
+         << " | Titulo: " << pub->titulo
+         << " | Anio: " << pub->anio
+         << " | Tipo: " << pub->tipo
+         << " | Citas: " << pub->cantidadCitas
+         << " | DOI: " << pub->doi
+         << endl;
+
+    cout << "   Investigador: ";
+
+    if (pub->investigadorPrincipal != NULL)
+        cout << pub->investigadorPrincipal->nombreCompleto;
+    else
+        cout << "(sin investigador)";
+
+    cout << " | Revista: ";
+
+    if (pub->suRevista != NULL)
+        cout << pub->suRevista->nombre;
+    else
+        cout << "(sin revista)";
+
+    cout << " | Proyecto: ";
+
+    if (pub->suProyecto != NULL)
+        cout << pub->suProyecto->nombre;
+    else
+        cout << "(sin proyecto)";
+
+    cout << endl;
+}
+
+
+// Muestra todas las publicaciones de la lista circular.
+void mostrarPublicaciones() {
+
+    if (primeraPublicacion == NULL) {
+        cout << "No hay publicaciones registradas." << endl;
+        return;
+    }
+
+    publicacion* aux = primeraPublicacion;
+
+    do {
+        mostrarPublicacion(aux);
+        aux = aux->sig;
+
+    } while (aux != primeraPublicacion);
+}
+
+
+//---------------------------------------------Parte de Gerald - Citaciones---------------------------------------------
+
+// Busca una citacion por ID dentro de una publicacion.
+// Devuelve NULL si no existe.
+citacion* buscarCitacion(publicacion* pub, int id) {
+
+    if (pub == NULL) {
+        return NULL;
+    }
+
+    citacion* aux = pub->citas;
+
+    while (aux != NULL) {
+
+        if (aux->idCita == id) {
+            return aux;
+        }
+
+        aux = aux->sig;
+    }
+
+    return NULL;
+}
+
+
+// Comprueba si un ID de citacion ya existe en cualquier publicacion.
+bool existeIdCitacion(int id) {
+
+    if (primeraPublicacion == NULL) {
+        return false;
+    }
+
+    publicacion* pub = primeraPublicacion;
+
+    do {
+
+        citacion* cita = pub->citas;
+
+        while (cita != NULL) {
+
+            if (cita->idCita == id) {
+                return true;
+            }
+
+            cita = cita->sig;
+        }
+
+        pub = pub->sig;
+
+    } while (pub != primeraPublicacion);
+
+    return false;
+}
+
+
+// Inserta una citacion al final de la sublista doble de una publicacion.
+bool insertarCitacion(publicacion* publicacionCitada,
+                      int id,
+                      int anio,
+                      publicacion* publicacionCitante,
+                      investigador* autorCitante) {
+
+    // Validar que la publicacion citada exista
+    if (publicacionCitada == NULL) {
+        cout << "Error: la publicacion citada no existe." << endl;
+        return false;
+    }
+
+    // Validar ID
+    if (id <= 0) {
+        cout << "Error: el ID debe ser mayor que 0." << endl;
+        return false;
+    }
+
+    // Evitar IDs repetidos
+    if (existeIdCitacion(id)) {
+        cout << "Error: ya existe una citacion con ese ID." << endl;
+        return false;
+    }
+
+    // Validar anio
+    if (anio <= 0) {
+        cout << "Error: el anio debe ser mayor que 0." << endl;
+        return false;
+    }
+
+    // Validar publicacion citante
+    if (publicacionCitante == NULL) {
+        cout << "Error: la publicacion citante no existe." << endl;
+        return false;
+    }
+
+    // Validar autor citante
+    if (autorCitante == NULL) {
+        cout << "Error: el autor citante no existe." << endl;
+        return false;
+    }
+
+    // Crear nueva citacion
+    citacion* nueva = new citacion;
+
+    nueva->idCita = id;
+    nueva->anio = anio;
+    nueva->publicacionCitante = publicacionCitante;
+    nueva->autorCitante = autorCitante;
+
+    nueva->sig = NULL;
+    nueva->ant = NULL;
+
+
+    // Caso 1: la publicacion aun no tiene citaciones
+    if (publicacionCitada->citas == NULL) {
+
+        publicacionCitada->citas = nueva;
+
+    } else {
+
+        // Caso 2: insertar al final
+        citacion* aux = publicacionCitada->citas;
+
+        while (aux->sig != NULL) {
+            aux = aux->sig;
+        }
+
+        aux->sig = nueva;
+        nueva->ant = aux;
+    }
+
+    return true;
+}
+
+
+// Muestra una sola citacion.
+void mostrarCitacion(citacion* cita) {
+
+    if (cita == NULL) {
+        cout << "Citacion no encontrada." << endl;
+        return;
+    }
+
+    cout << "ID cita: " << cita->idCita
+         << " | Anio: " << cita->anio
+         << " | Publicacion citante: ";
+
+    if (cita->publicacionCitante != NULL) {
+        cout << cita->publicacionCitante->titulo;
+    } else {
+        cout << "(sin publicacion)";
+    }
+
+    cout << " | Autor citante: ";
+
+    if (cita->autorCitante != NULL) {
+        cout << cita->autorCitante->nombreCompleto;
+    } else {
+        cout << "(sin autor)";
+    }
+
+    cout << endl;
+}
+
+
+// Muestra todas las citaciones recibidas por una publicacion.
+void mostrarCitaciones(publicacion* pub) {
+
+    if (pub == NULL) {
+        cout << "Publicacion no encontrada." << endl;
+        return;
+    }
+
+    if (pub->citas == NULL) {
+        cout << "La publicacion no tiene citaciones registradas." << endl;
+        return;
+    }
+
+    cout << "Citaciones de " << pub->titulo << ":" << endl;
+
+    citacion* aux = pub->citas;
+
+    while (aux != NULL) {
+
+        mostrarCitacion(aux);
+
+        aux = aux->sig;
+    }
+}
+
+
+//---------------------------------------------Parte de Gerald - Coautores de Publicacion---------------------------------------------
+
+// Busca un coautor por ID dentro de una publicacion.
+// Devuelve NULL si no esta asociado a esa publicacion.
+coautor* buscarCoautorPublicacion(publicacion* pub, int idCoautor) {
+
+    if (pub == NULL) {
+        return NULL;
+    }
+
+    coautorPublicacion* aux = pub->coautores;
+
+    while (aux != NULL) {
+
+        if (aux->elCoautor != NULL &&
+            aux->elCoautor->idCoautor == idCoautor) {
+
+            return aux->elCoautor;
+        }
+
+        aux = aux->sig;
+    }
+
+    return NULL;
+}
+
+
+// Agrega un coautor a la sublista doble de una publicacion.
+bool agregarCoautorAPublicacion(publicacion* pub, coautor* autor) {
+
+    // Validar publicacion
+    if (pub == NULL) {
+        cout << "Error: la publicacion no existe." << endl;
+        return false;
+    }
+
+    // Validar coautor
+    if (autor == NULL) {
+        cout << "Error: el coautor no existe." << endl;
+        return false;
+    }
+
+    // Evitar repetir el mismo coautor en una publicacion
+    if (buscarCoautorPublicacion(pub, autor->idCoautor) != NULL) {
+        cout << "Error: el coautor ya esta asociado a esta publicacion." << endl;
+        return false;
+    }
+
+    // Crear nodo de enlace
+    coautorPublicacion* nuevo = new coautorPublicacion;
+
+    nuevo->elCoautor = autor;
+    nuevo->sig = NULL;
+    nuevo->ant = NULL;
+
+
+    // Caso 1: la publicacion no tiene coautores
+    if (pub->coautores == NULL) {
+
+        pub->coautores = nuevo;
+
+    } else {
+
+        // Caso 2: insertar al final de la sublista doble
+        coautorPublicacion* aux = pub->coautores;
+
+        while (aux->sig != NULL) {
+            aux = aux->sig;
+        }
+
+        aux->sig = nuevo;
+        nuevo->ant = aux;
+    }
+
+    return true;
+}
+
+
+// Muestra todos los coautores de una publicacion.
+void mostrarCoautoresPublicacion(publicacion* pub) {
+
+    if (pub == NULL) {
+        cout << "Publicacion no encontrada." << endl;
+        return;
+    }
+
+    if (pub->coautores == NULL) {
+        cout << "La publicacion no tiene coautores registrados." << endl;
+        return;
+    }
+
+    cout << "Coautores de " << pub->titulo << ":" << endl;
+
+    coautorPublicacion* aux = pub->coautores;
+
+    while (aux != NULL) {
+
+        if (aux->elCoautor != NULL) {
+            mostrarCoautor(aux->elCoautor);
+        }
+
+        aux = aux->sig;
+    }
+}
+
+
+// Cuenta cuantos coautores tiene una publicacion.
+// Nos servira despues para la consulta de la publicacion con mas autores.
+int contarCoautoresPublicacion(publicacion* pub) {
+
+    if (pub == NULL) {
+        return 0;
+    }
+
+    int total = 0;
+
+    coautorPublicacion* aux = pub->coautores;
+
+    while (aux != NULL) {
+        total++;
+        aux = aux->sig;
+    }
+
+    return total;
+}
+
+//---------------------------------------------Eliminar Publicacion---------------------------------------------
+
+// Quita el enlace de una publicacion de la sublista de su investigador.
+// No elimina la publicacion, solamente el nodo pubInvestigador.
+void quitarPublicacionDeInvestigador(investigador* inv, publicacion* pub) {
+
+    if (inv == NULL || pub == NULL) {
+        return;
+    }
+
+    pubInvestigador* aux = inv->publicaciones;
+
+    while (aux != NULL && aux->laPublicacion != pub) {
+        aux = aux->sig;
+    }
+
+    if (aux == NULL) {
+        return;
+    }
+
+    // Si tiene nodo anterior
+    if (aux->ant != NULL) {
+        aux->ant->sig = aux->sig;
+    } else {
+        // Era el primero de la sublista
+        inv->publicaciones = aux->sig;
+    }
+
+    // Si tiene nodo siguiente
+    if (aux->sig != NULL) {
+        aux->sig->ant = aux->ant;
+    }
+
+    delete aux;
+}
+
+
+// Quita el enlace de una publicacion de la sublista de su revista.
+void quitarPublicacionDeRevista(revista* rev, publicacion* pub) {
+
+    if (rev == NULL || pub == NULL) {
+        return;
+    }
+
+    pubRevista* aux = rev->publicaciones;
+
+    while (aux != NULL && aux->laPublicacion != pub) {
+        aux = aux->sig;
+    }
+
+    if (aux == NULL) {
+        return;
+    }
+
+    if (aux->ant != NULL) {
+        aux->ant->sig = aux->sig;
+    } else {
+        // Era el primero de la sublista
+        rev->publicaciones = aux->sig;
+    }
+
+    if (aux->sig != NULL) {
+        aux->sig->ant = aux->ant;
+    }
+
+    delete aux;
+}
+
+
+// Elimina citaciones de otras publicaciones que tengan
+// como publicacion citante a la publicacion que vamos a borrar.
+void quitarReferenciasDeCitaciones(publicacion* pubEliminar) {
+
+    if (primeraPublicacion == NULL || pubEliminar == NULL) {
+        return;
+    }
+
+    publicacion* pub = primeraPublicacion;
+
+    do {
+
+        // Las citas propias de pubEliminar se eliminan despues.
+        if (pub != pubEliminar) {
+
+            citacion* cita = pub->citas;
+
+            while (cita != NULL) {
+
+                citacion* siguiente = cita->sig;
+
+                if (cita->publicacionCitante == pubEliminar) {
+
+                    if (cita->ant != NULL) {
+                        cita->ant->sig = cita->sig;
+                    } else {
+                        pub->citas = cita->sig;
+                    }
+
+                    if (cita->sig != NULL) {
+                        cita->sig->ant = cita->ant;
+                    }
+
+                    delete cita;
+                }
+
+                cita = siguiente;
+            }
+        }
+
+        pub = pub->sig;
+
+    } while (pub != primeraPublicacion);
+}
+
+
+// Libera todas las citaciones que pertenecen a la publicacion.
+void liberarCitacionesPublicacion(publicacion* pub) {
+
+    citacion* aux = pub->citas;
+
+    while (aux != NULL) {
+
+        citacion* siguiente = aux->sig;
+
+        delete aux;
+
+        aux = siguiente;
+    }
+
+    pub->citas = NULL;
+}
+
+
+// Libera los nodos de enlace con coautores.
+// NO elimina los coautores reales.
+void liberarCoautoresPublicacion(publicacion* pub) {
+
+    coautorPublicacion* aux = pub->coautores;
+
+    while (aux != NULL) {
+
+        coautorPublicacion* siguiente = aux->sig;
+
+        delete aux;
+
+        aux = siguiente;
+    }
+
+    pub->coautores = NULL;
+}
+
+
+// Elimina una publicacion de la lista circular.
+bool eliminarPublicacion(int id) {
+
+    publicacion* eliminar = buscarPublicacion(id);
+
+    if (eliminar == NULL) {
+        cout << "Error: no existe una publicacion con ese ID." << endl;
+        return false;
+    }
+
+
+    // 1. Quitar referencias desde otras citaciones
+    quitarReferenciasDeCitaciones(eliminar);
+
+
+    // 2. Quitar la publicacion de la sublista del investigador
+    quitarPublicacionDeInvestigador(
+        eliminar->investigadorPrincipal,
+        eliminar
+    );
+
+
+    // 3. Quitar la publicacion de la sublista de la revista
+    quitarPublicacionDeRevista(
+        eliminar->suRevista,
+        eliminar
+    );
+
+
+    // 4. Liberar sus propias sublistas
+    liberarCitacionesPublicacion(eliminar);
+    liberarCoautoresPublicacion(eliminar);
+
+
+    // 5. Quitar de la lista circular
+
+    // Caso: solamente existe una publicacion
+    if (primeraPublicacion == eliminar &&
+        primeraPublicacion->sig == primeraPublicacion) {
+
+        primeraPublicacion = NULL;
+    }
+
+    // Caso: eliminar la primera y hay mas publicaciones
+    else if (primeraPublicacion == eliminar) {
+
+        publicacion* ultimo = primeraPublicacion;
+
+        while (ultimo->sig != primeraPublicacion) {
+            ultimo = ultimo->sig;
+        }
+
+        primeraPublicacion = primeraPublicacion->sig;
+
+        ultimo->sig = primeraPublicacion;
+    }
+
+    // Caso: eliminar una publicacion que no es la primera
+    else {
+
+        publicacion* anterior = primeraPublicacion;
+
+        while (anterior->sig != eliminar) {
+            anterior = anterior->sig;
+        }
+
+        anterior->sig = eliminar->sig;
+    }
+
+
+    delete eliminar;
+
+    return true;
+}
+
+
 //----------------------------------------------------------------------------------------------------------------------
 
 
@@ -1183,6 +2272,65 @@ int main() {
 
     mostrarRevistas();
 
+
+    titulo("PRUEBA DE PROYECTOS");
+
+prueba("Insertar 3 proyectos validos");
+
+insertarProyecto(
+    1,
+    "Inteligencia Artificial Aplicada",
+    1500000,
+    2024,
+    2026,
+    buscarInvestigador(1)
+);
+
+insertarProyecto(
+    2,
+    "Redes del Futuro",
+    900000,
+    2022,
+    2025,
+    buscarInvestigador(2)
+);
+
+insertarProyecto(
+    3,
+    "Ciberseguridad Aplicada",
+    2000000,
+    2023,
+    2027,
+    buscarInvestigador(1)
+);
+
+prueba("Lista de proyectos ordenada por anio");
+mostrarProyectos();
+
+prueba("ID repetido (debe dar error)");
+insertarProyecto(
+    1,
+    "Proyecto repetido",
+    500000,
+    2025,
+    2026,
+    buscarInvestigador(1)
+);
+
+prueba("Investigador que no existe (debe dar error)");
+insertarProyecto(
+    4,
+    "Proyecto sin investigador",
+    500000,
+    2025,
+    2026,
+    buscarInvestigador(99)
+);
+
+prueba("Buscar proyecto 2 y proyecto 99");
+mostrarProyecto(buscarProyecto(2));
+mostrarProyecto(buscarProyecto(99));
+
     titulo("PRUEBA DE SUBLISTA pubInvestigador");
 
 // TEMPORAL: publicaciones creadas a mano
@@ -1243,6 +2391,294 @@ int main() {
     prueba("Actualizar el indice H guardado y mostrar");
     actualizarTodosLosIndicesH();
     mostrarInvestigador(buscarInvestigador(1));
+
+titulo("PRUEBA DE PUBLICACIONES");
+
+prueba("Insertar 3 publicaciones validas");
+
+insertarPublicacion(
+    101,
+    "Inteligencia Artificial y Educacion",
+    2024,
+    "Articulo",
+    15,
+    "10.1000/ia101",
+    buscarInvestigador(1),
+    buscarRevista(1),
+    buscarProyecto(1)
+);
+
+insertarPublicacion(
+    102,
+    "Seguridad en Redes Modernas",
+    2021,
+    "Conferencia",
+    8,
+    "10.1000/red102",
+    buscarInvestigador(2),
+    buscarRevista(2),
+    buscarProyecto(2)
+);
+
+insertarPublicacion(
+    103,
+    "Sistemas Distribuidos",
+    2023,
+    "Libro",
+    12,
+    "10.1000/sis103",
+    buscarInvestigador(1),
+    buscarRevista(3),
+    buscarProyecto(3)
+);
+
+
+prueba("Lista de publicaciones ordenada por anio");
+mostrarPublicaciones();
+
+
+prueba("ID repetido (debe dar error)");
+
+insertarPublicacion(
+    101,
+    "Publicacion repetida",
+    2025,
+    "Articulo",
+    5,
+    "10.1000/repetida",
+    buscarInvestigador(1),
+    buscarRevista(1),
+    buscarProyecto(1)
+);
+
+
+prueba("Investigador inexistente (debe dar error)");
+
+insertarPublicacion(
+    104,
+    "Publicacion sin investigador",
+    2025,
+    "Articulo",
+    5,
+    "10.1000/error104",
+    buscarInvestigador(99),
+    buscarRevista(1),
+    buscarProyecto(1)
+);
+
+
+prueba("Buscar publicacion 102 y publicacion 999");
+
+mostrarPublicacion(buscarPublicacion(102));
+
+mostrarPublicacion(buscarPublicacion(999));
+
+
+titulo("PRUEBA DE CITACIONES");
+
+prueba("Insertar 3 citaciones validas");
+
+insertarCitacion(
+    buscarPublicacion(101),
+    1001,
+    2025,
+    buscarPublicacion(102),
+    buscarInvestigador(2)
+);
+
+insertarCitacion(
+    buscarPublicacion(101),
+    1002,
+    2026,
+    buscarPublicacion(103),
+    buscarInvestigador(1)
+);
+
+insertarCitacion(
+    buscarPublicacion(102),
+    1003,
+    2024,
+    buscarPublicacion(101),
+    buscarInvestigador(1)
+);
+
+
+prueba("Mostrar citaciones de la publicacion 101");
+mostrarCitaciones(buscarPublicacion(101));
+
+
+prueba("Mostrar citaciones de la publicacion 102");
+mostrarCitaciones(buscarPublicacion(102));
+
+
+prueba("ID repetido (debe dar error)");
+
+insertarCitacion(
+    buscarPublicacion(102),
+    1001,
+    2025,
+    buscarPublicacion(103),
+    buscarInvestigador(1)
+);
+
+
+prueba("Publicacion citada inexistente (debe dar error)");
+
+insertarCitacion(
+    buscarPublicacion(999),
+    1004,
+    2025,
+    buscarPublicacion(101),
+    buscarInvestigador(1)
+);
+
+
+prueba("Publicacion citante inexistente (debe dar error)");
+
+insertarCitacion(
+    buscarPublicacion(101),
+    1005,
+    2025,
+    buscarPublicacion(999),
+    buscarInvestigador(1)
+);
+
+
+prueba("Autor citante inexistente (debe dar error)");
+
+insertarCitacion(
+    buscarPublicacion(101),
+    1006,
+    2025,
+    buscarPublicacion(102),
+    buscarInvestigador(99)
+);
+
+
+prueba("Buscar cita 1002 y cita 9999");
+
+mostrarCitacion(
+    buscarCitacion(buscarPublicacion(101), 1002)
+);
+
+mostrarCitacion(
+    buscarCitacion(buscarPublicacion(101), 9999)
+);
+
+
+
+titulo("PRUEBA DE COAUTORES DE PUBLICACION");
+
+prueba("Agregar coautores a las publicaciones");
+
+// Pedro Soto y Marta Diaz son coautores del investigador 1
+agregarCoautorAPublicacion(
+    buscarPublicacion(101),
+    buscarCoautor(buscarInvestigador(1), 1)
+);
+
+agregarCoautorAPublicacion(
+    buscarPublicacion(101),
+    buscarCoautor(buscarInvestigador(1), 2)
+);
+
+// Raul Vega pertenece a la sublista del investigador 2
+agregarCoautorAPublicacion(
+    buscarPublicacion(102),
+    buscarCoautor(buscarInvestigador(2), 3)
+);
+
+
+prueba("Mostrar coautores de la publicacion 101");
+mostrarCoautoresPublicacion(buscarPublicacion(101));
+
+
+prueba("Mostrar coautores de la publicacion 102");
+mostrarCoautoresPublicacion(buscarPublicacion(102));
+
+
+prueba("Coautor repetido en la publicacion 101 (debe dar error)");
+
+agregarCoautorAPublicacion(
+    buscarPublicacion(101),
+    buscarCoautor(buscarInvestigador(1), 1)
+);
+
+
+prueba("Publicacion inexistente (debe dar error)");
+
+agregarCoautorAPublicacion(
+    buscarPublicacion(999),
+    buscarCoautor(buscarInvestigador(1), 1)
+);
+
+
+prueba("Coautor inexistente (debe dar error)");
+
+agregarCoautorAPublicacion(
+    buscarPublicacion(101),
+    buscarCoautor(buscarInvestigador(1), 999)
+);
+
+
+prueba("Buscar coautor 2 en publicacion 101 y coautor 3");
+
+mostrarCoautor(
+    buscarCoautorPublicacion(buscarPublicacion(101), 2)
+);
+
+mostrarCoautor(
+    buscarCoautorPublicacion(buscarPublicacion(101), 3)
+);
+
+
+prueba("Cantidad de coautores de la publicacion 101");
+
+cout << "Cantidad: "
+     << contarCoautoresPublicacion(buscarPublicacion(101))
+     << endl;
+
+
+titulo("PRUEBA DE MODIFICAR REVISTA");
+
+prueba("Modificar revista ID 3");
+
+modificarRevista(
+    3,
+    "AA Science",
+    "Editorial Cientifica",
+    "Costa Rica",
+    7.5,
+    "Q2"
+);
+
+prueba("Lista despues de modificar");
+mostrarRevistas();
+
+
+prueba("Modificar revista inexistente (debe dar error)");
+
+modificarRevista(
+    99,
+    "Revista inexistente",
+    "Editorial",
+    "Costa Rica",
+    5.0,
+    "Q1"
+);
+
+
+prueba("Cuartil invalido (debe dar error)");
+
+modificarRevista(
+    3,
+    "AA Science",
+    "Editorial Cientifica",
+    "Costa Rica",
+    7.5,
+    "Q9"
+);
+
 
     return 0;
 }
