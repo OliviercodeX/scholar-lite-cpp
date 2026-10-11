@@ -892,6 +892,240 @@ void mostrarMetricas(investigador* inv) {
     cout << "   Produccion cientifica: " << totalPub << " publicaciones" << endl;
 }
 
+
+//---------------------------------------------Consultas de A---------------------------------------------
+
+// Consulta 1: investigador(es) con el mayor indice H (muestra todos los empates)
+void consultaMayorIndiceH() {
+    if (primerInvestigador == NULL) {
+        cout << "No hay investigadores registrados." << endl;
+        return;
+    }
+    actualizarTodosLosIndicesH();   // para que el indice H mostrado sea el real
+
+    // Pasada 1: encontrar el mayor indice H
+    int mayor = -1;
+    investigador* inv = primerInvestigador;
+    while (inv != NULL) {
+        int h = calcularIndiceH(inv);
+        if (h > mayor)
+            mayor = h;
+        inv = inv->sig;
+    }
+
+    // Pasada 2: mostrar a todos los que lo tienen
+    cout << "Mayor indice H: " << mayor << endl;
+    inv = primerInvestigador;
+    while (inv != NULL) {
+        if (calcularIndiceH(inv) == mayor)
+            mostrarInvestigador(inv);
+        inv = inv->sig;
+    }
+}
+
+
+
+// Consulta 2: investigador(es) con mas citas acumuladas (muestra todos los empates)
+void consultaMasCitas() {
+    if (primerInvestigador == NULL) {
+        cout << "No hay investigadores registrados." << endl;
+        return;
+    }
+    actualizarTodosLosIndicesH();   // para que el indice H mostrado sea el real
+
+    // Pasada 1: encontrar el mayor total de citas
+    int mayor = -1;
+    investigador* inv = primerInvestigador;
+    while (inv != NULL) {
+        int total = calcularTotalCitas(inv);
+        if (total > mayor)
+            mayor = total;
+        inv = inv->sig;
+    }
+
+    // Pasada 2: mostrar a todos los que lo tienen
+    cout << "Mayor total de citas acumuladas: " << mayor << endl;
+    inv = primerInvestigador;
+    while (inv != NULL) {
+        if (calcularTotalCitas(inv) == mayor)
+            mostrarInvestigador(inv);
+        inv = inv->sig;
+    }
+}
+
+
+// Consulta 5: investigador(es) con mas coautores (muestra todos los empates)
+void consultaMasCoautores() {
+    if (primerInvestigador == NULL) {
+        cout << "No hay investigadores registrados." << endl;
+        return;
+    }
+    actualizarTodosLosIndicesH();   // para que el indice H mostrado sea el real
+
+    // Pasada 1: encontrar la mayor cantidad de coautores
+    int mayor = -1;
+    investigador* inv = primerInvestigador;
+    while (inv != NULL) {
+        int cantidad = contarCoautores(inv);
+        if (cantidad > mayor)
+            mayor = cantidad;
+        inv = inv->sig;
+    }
+
+    // Pasada 2: mostrar a todos los que la tienen
+    cout << "Mayor cantidad de coautores: " << mayor << endl;
+    inv = primerInvestigador;
+    while (inv != NULL) {
+        if (contarCoautores(inv) == mayor)
+            mostrarInvestigador(inv);
+        inv = inv->sig;
+    }
+}
+
+// Cuenta cuantos investigadores pertenecen a una universidad
+int contarInvestigadoresDeUniversidad(universidad* uni) {
+    int total = 0;
+    investigador* inv = primerInvestigador;
+    while (inv != NULL) {
+        if (inv->suUniversidad == uni)
+            total++;
+        inv = inv->sig;
+    }
+    return total;
+}
+
+// Consulta 6: universidad(es) con mas investigadores registrados (muestra todos los empates)
+void consultaUniversidadMasInvestigadores() {
+    if (primeraUniversidad == NULL) {
+        cout << "No hay universidades registradas." << endl;
+        return;
+    }
+
+    // Pasada 1: encontrar la mayor cantidad de investigadores
+    int mayor = -1;
+    universidad* uni = primeraUniversidad;
+    while (uni != NULL) {
+        int cantidad = contarInvestigadoresDeUniversidad(uni);
+        if (cantidad > mayor)
+            mayor = cantidad;
+        uni = uni->sig;
+    }
+
+    // Pasada 2: mostrar todas las universidades que la tienen
+    cout << "Mayor cantidad de investigadores registrados: " << mayor << endl;
+    uni = primeraUniversidad;
+    while (uni != NULL) {
+        if (contarInvestigadoresDeUniversidad(uni) == mayor)
+            mostrarUniversidad(uni);
+        uni = uni->sig;
+    }
+}
+
+//---------------------------------------------Reportes de A---------------------------------------------
+
+// Reporte 1: todos los investigadores, cada uno con sus publicaciones
+void reporteInvestigadoresConPublicaciones() {
+    if (primerInvestigador == NULL) {
+        cout << "No hay investigadores registrados." << endl;
+        return;
+    }
+    actualizarTodosLosIndicesH();   // para que el indice H mostrado sea el real
+    investigador* inv = primerInvestigador;
+    while (inv != NULL) {
+        mostrarInvestigador(inv);
+        mostrarPublicacionesInvestigador(inv);
+        cout << endl;
+        inv = inv->sig;
+    }
+}
+
+// Reporte 5: red de coautoria de un investigador especifico
+void reporteRedCoautoria(int idInvestigador) {
+    investigador* inv = buscarInvestigador(idInvestigador);
+    if (inv == NULL) {
+        cout << "Investigador no encontrado." << endl;
+        return;
+    }
+    cout << "Red de coautoria de " << inv->nombreCompleto
+         << " (" << contarCoautores(inv) << " coautores)" << endl;
+    if (inv->coautores == NULL) {
+        cout << "   (sin coautores registrados)" << endl;
+        return;
+    }
+    coautor* c = inv->coautores;
+    while (c != NULL) {
+        cout << "   " << inv->nombreCompleto << " <-> " << c->nombre
+             << " | " << c->universidad
+             << " | Publicaciones conjuntas: " << c->cantidadPublicacionesConjuntas << endl;
+        c = c->sig;
+    }
+}
+
+// Reporte 8: investigadores agrupados por universidad
+void reporteInvestigadoresPorUniversidad() {
+    if (primeraUniversidad == NULL) {
+        cout << "No hay universidades registradas." << endl;
+        return;
+    }
+    actualizarTodosLosIndicesH();
+    universidad* uni = primeraUniversidad;
+    while (uni != NULL) {
+        cout << uni->nombre << " (" << uni->pais << ") - "
+             << contarInvestigadoresDeUniversidad(uni) << " investigadores" << endl;
+        if (contarInvestigadoresDeUniversidad(uni) == 0) {
+            cout << "   (sin investigadores)" << endl;
+        } else {
+            investigador* inv = primerInvestigador;
+            while (inv != NULL) {
+                if (inv->suUniversidad == uni)
+                    cout << "   - " << inv->nombreCompleto << " | Area: " << inv->suArea->nombreArea
+                         << " | Indice H: " << inv->indiceH << endl;
+                inv = inv->sig;
+            }
+        }
+        uni = uni->sig;
+    }
+}
+
+// Reporte 9: investigadores ordenados por indice H, de mayor a menor
+void reporteInvestigadoresPorIndiceH() {
+    if (primerInvestigador == NULL) {
+        cout << "No hay investigadores registrados." << endl;
+        return;
+    }
+    actualizarTodosLosIndicesH();
+
+    // Copiar los punteros a un arreglo para ordenar sin alterar la lista original
+    int n = 0;
+    investigador* inv = primerInvestigador;
+    while (inv != NULL) {
+        n++;
+        inv = inv->sig;
+    }
+    investigador** orden = new investigador*[n];
+    inv = primerInvestigador;
+    for (int i = 0; i < n; i++) {
+        orden[i] = inv;
+        inv = inv->sig;
+    }
+
+    // Ordenar por insercion (estable: en empates respeta el orden original)
+    for (int i = 1; i < n; i++) {
+        investigador* clave = orden[i];
+        int j = i - 1;
+        while (j >= 0 && orden[j]->indiceH < clave->indiceH) {
+            orden[j + 1] = orden[j];
+            j--;
+        }
+        orden[j + 1] = clave;
+    }
+
+    for (int i = 0; i < n; i++)
+        cout << (i + 1) << ". " << orden[i]->nombreCompleto
+             << " | Indice H: " << orden[i]->indiceH << endl;
+
+    delete[] orden;
+}
 //---------------------------------------------Precarga de datos de A---------------------------------------------
 
 void precargarUniversidades() {
@@ -2167,6 +2401,10 @@ int main() {
     primerProyecto = NULL;
     primeraUniversidad = NULL;
 
+    // Datos precargados
+    precargarDatosA();
+    // precargarDatosB();   // Gerald agrega aqui sus precargas
+
     cout << "|->->->->->->->->Sistema de Gestion de Produccion Cientifica<-<-<-<-<-<-<-<-<-" << endl;
 
     // ---------------- UNIVERSIDADES ----------------
@@ -2272,65 +2510,6 @@ int main() {
 
     mostrarRevistas();
 
-
-    titulo("PRUEBA DE PROYECTOS");
-
-prueba("Insertar 3 proyectos validos");
-
-insertarProyecto(
-    1,
-    "Inteligencia Artificial Aplicada",
-    1500000,
-    2024,
-    2026,
-    buscarInvestigador(1)
-);
-
-insertarProyecto(
-    2,
-    "Redes del Futuro",
-    900000,
-    2022,
-    2025,
-    buscarInvestigador(2)
-);
-
-insertarProyecto(
-    3,
-    "Ciberseguridad Aplicada",
-    2000000,
-    2023,
-    2027,
-    buscarInvestigador(1)
-);
-
-prueba("Lista de proyectos ordenada por anio");
-mostrarProyectos();
-
-prueba("ID repetido (debe dar error)");
-insertarProyecto(
-    1,
-    "Proyecto repetido",
-    500000,
-    2025,
-    2026,
-    buscarInvestigador(1)
-);
-
-prueba("Investigador que no existe (debe dar error)");
-insertarProyecto(
-    4,
-    "Proyecto sin investigador",
-    500000,
-    2025,
-    2026,
-    buscarInvestigador(99)
-);
-
-prueba("Buscar proyecto 2 y proyecto 99");
-mostrarProyecto(buscarProyecto(2));
-mostrarProyecto(buscarProyecto(99));
-
     titulo("PRUEBA DE SUBLISTA pubInvestigador");
 
 // TEMPORAL: publicaciones creadas a mano
@@ -2392,6 +2571,7 @@ mostrarProyecto(buscarProyecto(99));
     actualizarTodosLosIndicesH();
     mostrarInvestigador(buscarInvestigador(1));
 
+    
 titulo("PRUEBA DE PUBLICACIONES");
 
 prueba("Insertar 3 publicaciones validas");
@@ -2678,7 +2858,6 @@ modificarRevista(
     7.5,
     "Q9"
 );
-
 
     return 0;
 }
