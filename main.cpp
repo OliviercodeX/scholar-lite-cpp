@@ -36,7 +36,7 @@ struct universidad;
 struct pubInvestigador;
 struct pubRevista;
 struct coautorPublicacion;
-//dd            
+          
 
 // ============================================================
 //  LISTAS SIMPLES 
@@ -3249,16 +3249,1279 @@ void reportePublicacionesDeArea(int idArea) {
 //|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 //------------------------------------------------------------------------------------------------------------------
 
-// Funciones auxiliares para ordenar la salida de las pruebas
-void titulo(string texto) {
-    cout << endl << "========== " << texto << " ==========" << endl;
+
+
+// ---------------------------------------------MENU DE CONSULTAS---------------------------------------------
+
+void menuConsultas() {
+
+    int opcion;
+
+    do {
+
+        cout << endl;
+        cout << "====================================================" << endl;
+        cout << "                    CONSULTAS" << endl;
+        cout << "====================================================" << endl;
+        cout << "1. Investigador con mayor indice H" << endl;
+        cout << "2. Investigador con mas citas" << endl;
+        cout << "3. Publicacion con mas citas" << endl;
+        cout << "4. Revista con mayor factor de impacto" << endl;
+        cout << "5. Investigador con mas coautores" << endl;
+        cout << "6. Universidad con mas investigadores" << endl;
+        cout << "7. Area con mas publicaciones" << endl;
+        cout << "8. Anio con mayor produccion cientifica" << endl;
+        cout << "9. Publicacion con mas autores" << endl;
+        cout << "10. Investigador con mas articulos Q1" << endl;
+        cout << "0. Volver al menu principal" << endl;
+        cout << "====================================================" << endl;
+        cout << "Seleccione una opcion: ";
+
+        cin >> opcion;
+
+        cout << endl;
+
+        switch (opcion) {
+
+        case 1:
+            consultaMayorIndiceH();
+            break;
+
+        case 2:
+            consultaMasCitas();
+            break;
+
+        case 3:
+            consultaPublicacionMasCitada();
+            break;
+
+        case 4:
+            consultaRevistaMayorImpacto();
+            break;
+
+        case 5:
+            consultaMasCoautores();
+            break;
+
+        case 6:
+            consultaUniversidadMasInvestigadores();
+            break;
+
+        case 7:
+            consultaAreaMasPublicaciones();
+            break;
+
+        case 8:
+            consultaAnioMayorProduccion();
+            break;
+
+        case 9:
+            consultaPublicacionMasAutores();
+            break;
+
+        case 10:
+            consultaInvestigadorMasArticulosQ1();
+            break;
+
+        case 0:
+            cout << "Volviendo al menu principal..." << endl;
+            break;
+
+        default:
+            cout << "Opcion invalida." << endl;
+            break;
+        }
+
+    } while (opcion != 0);
 }
 
-void prueba(string texto) {
-    cout << "-> " << texto << endl;}
+// ---------------------------------------------MENU DE REPORTES---------------------------------------------
+
+void menuReportes() {
+
+    int opcion;
+
+    do {
+
+        cout << endl;
+        cout << "====================================================" << endl;
+        cout << "                     REPORTES" << endl;
+        cout << "====================================================" << endl;
+        cout << "1. Investigadores con sus publicaciones" << endl;
+        cout << "2. Publicaciones organizadas por anio" << endl;
+        cout << "3. Publicaciones ordenadas por cantidad de citas" << endl;
+        cout << "4. Revistas y factor de impacto" << endl;
+        cout << "5. Red de coautoria de un investigador" << endl;
+        cout << "6. Publicaciones de una revista" << endl;
+        cout << "7. Publicaciones de un area" << endl;
+        cout << "8. Investigadores agrupados por universidad" << endl;
+        cout << "9. Investigadores ordenados por indice H" << endl;
+        cout << "0. Volver al menu principal" << endl;
+        cout << "====================================================" << endl;
+        cout << "Seleccione una opcion: ";
+
+        cin >> opcion;
+
+        cout << endl;
+
+        switch (opcion) {
+
+        case 1:
+            reporteInvestigadoresConPublicaciones();
+            break;
+
+        case 2:
+            reportePublicacionesPorAnio();
+            break;
+
+        case 3:
+            reportePublicacionesPorCitas();
+            break;
+
+        case 4:
+            reporteRevistasFactorImpacto();
+            break;
+
+        case 5: {
+            int idInvestigador;
+
+            cout << "Digite el ID del investigador: ";
+            cin >> idInvestigador;
+
+            reporteRedCoautoria(idInvestigador);
+
+            break;
+        }
+
+        case 6: {
+            int idRevista;
+
+            cout << "Digite el ID de la revista: ";
+            cin >> idRevista;
+
+            reportePublicacionesDeRevista(idRevista);
+
+            break;
+        }
+
+        case 7: {
+            int idArea;
+
+            cout << "Digite el ID del area: ";
+            cin >> idArea;
+
+            reportePublicacionesDeArea(idArea);
+
+            break;
+        }
+
+        case 8:
+            reporteInvestigadoresPorUniversidad();
+            break;
+
+        case 9:
+            reporteInvestigadoresPorIndiceH();
+            break;
+
+        case 0:
+            cout << "Volviendo al menu principal..." << endl;
+            break;
+
+        default:
+            cout << "Opcion invalida." << endl;
+            break;
+        }
+
+    } while (opcion != 0);
+}
+
+// ---------------------------------------------MENU INSERTAR DATOS---------------------------------------------
+
+void menuInsertarDatos() {
+
+    int opcion;
+
+    do {
+
+        cout << endl;
+        cout << "====================================================" << endl;
+        cout << "                   INSERTAR DATOS" << endl;
+        cout << "====================================================" << endl;
+        cout << "1. Insertar investigador" << endl;
+        cout << "2. Insertar revista" << endl;
+        cout << "3. Insertar area de investigacion" << endl;
+        cout << "4. Insertar publicacion" << endl;
+        cout << "5. Insertar proyecto" << endl;
+        cout << "6. Insertar universidad" << endl;
+        cout << "7. Insertar coautor a un investigador" << endl;
+        cout << "8. Insertar citacion a una publicacion" << endl;
+        cout << "9. Asociar coautor a una publicacion" << endl;
+        cout << "0. Volver a gestion de datos" << endl;
+        cout << "====================================================" << endl;
+        cout << "Seleccione una opcion: ";
+
+        cin >> opcion;
+
+        cout << endl;
+
+        switch (opcion) {
+
+        // -------------------------------------------------
+        // INVESTIGADOR
+        // -------------------------------------------------
+        case 1: {
+
+            int id;
+            int idUniversidad;
+            int idArea;
+
+            string nombre;
+            string pais;
+            string correo;
+
+            cout << "Digite el ID del investigador: ";
+            cin >> id;
+
+            cout << "Digite el nombre completo: ";
+            getline(cin >> ws, nombre);
+
+            cout << "Digite el ID de la universidad: ";
+            cin >> idUniversidad;
+
+            cout << "Digite el pais: ";
+            getline(cin >> ws, pais);
+
+            cout << "Digite el ID del area de investigacion: ";
+            cin >> idArea;
+
+            cout << "Digite el correo: ";
+            getline(cin >> ws, correo);
+
+            insertarInvestigador(
+                id,
+                nombre,
+                buscarUniversidad(idUniversidad),
+                pais,
+                buscarArea(idArea),
+                correo,
+                0
+            );
+
+            break;
+        }
+
+
+        // -------------------------------------------------
+        // REVISTA
+        // -------------------------------------------------
+        case 2: {
+
+            int id;
+            float factorImpacto;
+
+            string nombre;
+            string editorial;
+            string pais;
+            string cuartil;
+
+            cout << "Digite el ID de la revista: ";
+            cin >> id;
+
+            cout << "Digite el nombre de la revista: ";
+            getline(cin >> ws, nombre);
+
+            cout << "Digite la editorial: ";
+            getline(cin >> ws, editorial);
+
+            cout << "Digite el pais: ";
+            getline(cin >> ws, pais);
+
+            cout << "Digite el factor de impacto: ";
+            cin >> factorImpacto;
+
+            cout << "Digite el cuartil (Q1, Q2, Q3 o Q4): ";
+            cin >> cuartil;
+
+            insertarRevista(
+                id,
+                nombre,
+                editorial,
+                pais,
+                factorImpacto,
+                cuartil
+            );
+
+            break;
+        }
+
+
+        // -------------------------------------------------
+        // AREA
+        // -------------------------------------------------
+        case 3: {
+
+            int id;
+
+            string nombre;
+            string descripcion;
+
+            cout << "Digite el ID del area: ";
+            cin >> id;
+
+            cout << "Digite el nombre del area: ";
+            getline(cin >> ws, nombre);
+
+            cout << "Digite la descripcion: ";
+            getline(cin >> ws, descripcion);
+
+            insertarArea(
+                id,
+                nombre,
+                descripcion
+            );
+
+            break;
+        }
+
+
+        // -------------------------------------------------
+        // PUBLICACION
+        // -------------------------------------------------
+        case 4: {
+
+            int id;
+            int anio;
+            int cantidadCitas;
+
+            int idInvestigador;
+            int idRevista;
+            int idProyecto;
+
+            string titulo;
+            string tipo;
+            string doi;
+
+            cout << "Digite el ID de la publicacion: ";
+            cin >> id;
+
+            cout << "Digite el titulo: ";
+            getline(cin >> ws, titulo);
+
+            cout << "Digite el anio: ";
+            cin >> anio;
+
+            cout << "Digite el tipo (Articulo, Libro o Conferencia): ";
+            getline(cin >> ws, tipo);
+
+            cout << "Digite la cantidad de citas: ";
+            cin >> cantidadCitas;
+
+            cout << "Digite el DOI: ";
+            getline(cin >> ws, doi);
+
+            cout << "Digite el ID del investigador principal: ";
+            cin >> idInvestigador;
+
+            cout << "Digite el ID de la revista: ";
+            cin >> idRevista;
+
+            cout << "Digite el ID del proyecto: ";
+            cin >> idProyecto;
+
+            bool insertada = insertarPublicacion(
+                id,
+                titulo,
+                anio,
+                tipo,
+                cantidadCitas,
+                doi,
+                buscarInvestigador(idInvestigador),
+                buscarRevista(idRevista),
+                buscarProyecto(idProyecto)
+            );
+
+            if (insertada) {
+                actualizarTodosLosIndicesH();
+            }
+
+            break;
+        }
+
+
+        // -------------------------------------------------
+        // PROYECTO
+        // -------------------------------------------------
+        case 5: {
+
+            int id;
+            float financiamiento;
+            int anioInicio;
+            int anioFinalizacion;
+            int idInvestigador;
+
+            string nombre;
+
+            cout << "Digite el ID del proyecto: ";
+            cin >> id;
+
+            cout << "Digite el nombre del proyecto: ";
+            getline(cin >> ws, nombre);
+
+            cout << "Digite el financiamiento: ";
+            cin >> financiamiento;
+
+            cout << "Digite el anio de inicio: ";
+            cin >> anioInicio;
+
+            cout << "Digite el anio de finalizacion: ";
+            cin >> anioFinalizacion;
+
+            cout << "Digite el ID del investigador responsable: ";
+            cin >> idInvestigador;
+
+            insertarProyecto(
+                id,
+                nombre,
+                financiamiento,
+                anioInicio,
+                anioFinalizacion,
+                buscarInvestigador(idInvestigador)
+            );
+
+            break;
+        }
+
+
+        // -------------------------------------------------
+        // UNIVERSIDAD
+        // -------------------------------------------------
+        case 6: {
+
+            int id;
+            int ranking;
+
+            string nombre;
+            string pais;
+
+            cout << "Digite el ID de la universidad: ";
+            cin >> id;
+
+            cout << "Digite el nombre de la universidad: ";
+            getline(cin >> ws, nombre);
+
+            cout << "Digite el pais: ";
+            getline(cin >> ws, pais);
+
+            cout << "Digite el ranking: ";
+            cin >> ranking;
+
+            insertarUniversidad(
+                id,
+                nombre,
+                pais,
+                ranking
+            );
+
+            break;
+        }
+
+
+        // -------------------------------------------------
+        // COAUTOR
+        // -------------------------------------------------
+        case 7: {
+
+            int idInvestigador;
+            int idCoautor;
+            int publicacionesConjuntas;
+
+            string nombre;
+            string universidad;
+
+            cout << "Digite el ID del investigador: ";
+            cin >> idInvestigador;
+
+            cout << "Digite el ID del coautor: ";
+            cin >> idCoautor;
+
+            cout << "Digite el nombre del coautor: ";
+            getline(cin >> ws, nombre);
+
+            cout << "Digite la universidad del coautor: ";
+            getline(cin >> ws, universidad);
+
+            cout << "Digite la cantidad de publicaciones conjuntas: ";
+            cin >> publicacionesConjuntas;
+
+            insertarCoautor(
+                buscarInvestigador(idInvestigador),
+                idCoautor,
+                nombre,
+                universidad,
+                publicacionesConjuntas
+            );
+
+            break;
+        }
+
+
+        // -------------------------------------------------
+        // CITACION
+        // -------------------------------------------------
+        case 8: {
+
+            int idPublicacionCitada;
+            int idCitacion;
+            int anio;
+            int idPublicacionCitante;
+            int idAutorCitante;
+
+            cout << "Digite el ID de la publicacion citada: ";
+            cin >> idPublicacionCitada;
+
+            cout << "Digite el ID de la citacion: ";
+            cin >> idCitacion;
+
+            cout << "Digite el anio de la citacion: ";
+            cin >> anio;
+
+            cout << "Digite el ID de la publicacion citante: ";
+            cin >> idPublicacionCitante;
+
+            cout << "Digite el ID del autor citante: ";
+            cin >> idAutorCitante;
+
+            insertarCitacion(
+                buscarPublicacion(idPublicacionCitada),
+                idCitacion,
+                anio,
+                buscarPublicacion(idPublicacionCitante),
+                buscarInvestigador(idAutorCitante)
+            );
+
+            break;
+        }
+
+
+        // -------------------------------------------------
+        // COAUTOR DE PUBLICACION
+        // -------------------------------------------------
+        case 9: {
+
+            int idPublicacion;
+            int idInvestigador;
+            int idCoautor;
+
+            cout << "Digite el ID de la publicacion: ";
+            cin >> idPublicacion;
+
+            cout << "Digite el ID del investigador al que pertenece el coautor: ";
+            cin >> idInvestigador;
+
+            investigador* inv =
+                buscarInvestigador(idInvestigador);
+
+            if (inv == NULL) {
+                cout << "Investigador no encontrado." << endl;
+                break;
+            }
+
+            cout << "Digite el ID del coautor: ";
+            cin >> idCoautor;
+
+            agregarCoautorAPublicacion(
+                buscarPublicacion(idPublicacion),
+                buscarCoautor(inv, idCoautor)
+            );
+
+            break;
+        }
+
+
+        case 0:
+
+            cout << "Volviendo a gestion de datos..." << endl;
+
+            break;
+
+
+        default:
+
+            cout << "Opcion invalida." << endl;
+
+            break;
+        }
+
+    } while (opcion != 0);
+}
+
+// ---------------------------------------------MENU BUSCAR DATOS---------------------------------------------
+
+void menuBuscarDatos() {
+
+    int opcion;
+
+    do {
+
+        cout << endl;
+        cout << "====================================================" << endl;
+        cout << "                    BUSCAR DATOS" << endl;
+        cout << "====================================================" << endl;
+        cout << "1. Buscar investigador" << endl;
+        cout << "2. Buscar revista" << endl;
+        cout << "3. Buscar area de investigacion" << endl;
+        cout << "4. Buscar publicacion" << endl;
+        cout << "5. Buscar proyecto" << endl;
+        cout << "6. Buscar universidad" << endl;
+        cout << "7. Buscar coautor de un investigador" << endl;
+        cout << "8. Buscar citacion de una publicacion" << endl;
+        cout << "9. Buscar coautor de una publicacion" << endl;
+        cout << "0. Volver a gestion de datos" << endl;
+        cout << "====================================================" << endl;
+        cout << "Seleccione una opcion: ";
+
+        cin >> opcion;
+
+        cout << endl;
+
+        switch (opcion) {
+
+        case 1: {
+            int id;
+
+            cout << "Digite el ID del investigador: ";
+            cin >> id;
+
+            mostrarInvestigador(buscarInvestigador(id));
+
+            break;
+        }
+
+        case 2: {
+            int id;
+
+            cout << "Digite el ID de la revista: ";
+            cin >> id;
+
+            mostrarRevista(buscarRevista(id));
+
+            break;
+        }
+
+        case 3: {
+            int id;
+
+            cout << "Digite el ID del area: ";
+            cin >> id;
+
+            mostrarArea(buscarArea(id));
+
+            break;
+        }
+
+        case 4: {
+            int id;
+
+            cout << "Digite el ID de la publicacion: ";
+            cin >> id;
+
+            mostrarPublicacion(buscarPublicacion(id));
+
+            break;
+        }
+
+        case 5: {
+            int id;
+
+            cout << "Digite el ID del proyecto: ";
+            cin >> id;
+
+            mostrarProyecto(buscarProyecto(id));
+
+            break;
+        }
+
+        case 6: {
+            int id;
+
+            cout << "Digite el ID de la universidad: ";
+            cin >> id;
+
+            mostrarUniversidad(buscarUniversidad(id));
+
+            break;
+        }
+
+        case 7: {
+            int idInvestigador;
+            int idCoautor;
+
+            cout << "Digite el ID del investigador: ";
+            cin >> idInvestigador;
+
+            investigador* inv = buscarInvestigador(idInvestigador);
+
+            if (inv == NULL) {
+                cout << "Investigador no encontrado." << endl;
+                break;
+            }
+
+            cout << "Digite el ID del coautor: ";
+            cin >> idCoautor;
+
+            mostrarCoautor(
+                buscarCoautor(inv, idCoautor)
+            );
+
+            break;
+        }
+
+        case 8: {
+            int idPublicacion;
+            int idCitacion;
+
+            cout << "Digite el ID de la publicacion: ";
+            cin >> idPublicacion;
+
+            publicacion* pub = buscarPublicacion(idPublicacion);
+
+            if (pub == NULL) {
+                cout << "Publicacion no encontrada." << endl;
+                break;
+            }
+
+            cout << "Digite el ID de la citacion: ";
+            cin >> idCitacion;
+
+            mostrarCitacion(
+                buscarCitacion(pub, idCitacion)
+            );
+
+            break;
+        }
+
+        case 9: {
+            int idPublicacion;
+            int idCoautor;
+
+            cout << "Digite el ID de la publicacion: ";
+            cin >> idPublicacion;
+
+            publicacion* pub = buscarPublicacion(idPublicacion);
+
+            if (pub == NULL) {
+                cout << "Publicacion no encontrada." << endl;
+                break;
+            }
+
+            cout << "Digite el ID del coautor: ";
+            cin >> idCoautor;
+
+            mostrarCoautor(
+                buscarCoautorPublicacion(pub, idCoautor)
+            );
+
+            break;
+        }
+
+        case 0:
+            cout << "Volviendo a gestion de datos..." << endl;
+            break;
+
+        default:
+            cout << "Opcion invalida." << endl;
+            break;
+        }
+
+    } while (opcion != 0);
+}
+
+// ---------------------------------------------MENU MOSTRAR DATOS---------------------------------------------
+
+void menuMostrarDatos() {
+
+    int opcion;
+
+    do {
+
+        cout << endl;
+        cout << "====================================================" << endl;
+        cout << "                   MOSTRAR DATOS" << endl;
+        cout << "====================================================" << endl;
+        cout << "1. Mostrar investigadores" << endl;
+        cout << "2. Mostrar revistas" << endl;
+        cout << "3. Mostrar areas de investigacion" << endl;
+        cout << "4. Mostrar publicaciones" << endl;
+        cout << "5. Mostrar proyectos" << endl;
+        cout << "6. Mostrar universidades" << endl;
+        cout << "7. Mostrar coautores de un investigador" << endl;
+        cout << "8. Mostrar citaciones de una publicacion" << endl;
+        cout << "9. Mostrar coautores de una publicacion" << endl;
+        cout << "0. Volver a gestion de datos" << endl;
+        cout << "====================================================" << endl;
+        cout << "Seleccione una opcion: ";
+
+        cin >> opcion;
+
+        cout << endl;
+
+        switch (opcion) {
+
+        case 1:
+            mostrarInvestigadores();
+            break;
+
+        case 2:
+            mostrarRevistas();
+            break;
+
+        case 3:
+            mostrarAreas();
+            break;
+
+        case 4:
+            mostrarPublicaciones();
+            break;
+
+        case 5:
+            mostrarProyectos();
+            break;
+
+        case 6:
+            mostrarUniversidades();
+            break;
+
+        case 7: {
+            int idInvestigador;
+
+            cout << "Digite el ID del investigador: ";
+            cin >> idInvestigador;
+
+            mostrarCoautores(
+                buscarInvestigador(idInvestigador)
+            );
+
+            break;
+        }
+
+        case 8: {
+            int idPublicacion;
+
+            cout << "Digite el ID de la publicacion: ";
+            cin >> idPublicacion;
+
+            mostrarCitaciones(
+                buscarPublicacion(idPublicacion)
+            );
+
+            break;
+        }
+
+        case 9: {
+            int idPublicacion;
+
+            cout << "Digite el ID de la publicacion: ";
+            cin >> idPublicacion;
+
+            mostrarCoautoresPublicacion(
+                buscarPublicacion(idPublicacion)
+            );
+
+            break;
+        }
+
+        case 0:
+            cout << "Volviendo a gestion de datos..." << endl;
+            break;
+
+        default:
+            cout << "Opcion invalida." << endl;
+            break;
+        }
+
+    } while (opcion != 0);
+}
+
+// ---------------------------------------------MENU MODIFICAR DATOS---------------------------------------------
+
+void menuModificarDatos() {
+
+    int opcion;
+
+    do {
+
+        cout << endl;
+        cout << "====================================================" << endl;
+        cout << "                  MODIFICAR DATOS" << endl;
+        cout << "====================================================" << endl;
+        cout << "1. Modificar universidad" << endl;
+        cout << "2. Modificar investigador" << endl;
+        cout << "3. Modificar revista" << endl;
+        cout << "0. Volver a gestion de datos" << endl;
+        cout << "====================================================" << endl;
+        cout << "Seleccione una opcion: ";
+
+        cin >> opcion;
+
+        cout << endl;
+
+        switch (opcion) {
+
+        case 1: {
+
+            int id;
+            int ranking;
+
+            string nombre;
+            string pais;
+
+            cout << "Digite el ID de la universidad: ";
+            cin >> id;
+
+            cout << "Digite el nuevo nombre: ";
+            getline(cin >> ws, nombre);
+
+            cout << "Digite el nuevo pais: ";
+            getline(cin >> ws, pais);
+
+            cout << "Digite el nuevo ranking: ";
+            cin >> ranking;
+
+            modificarUniversidad(
+                id,
+                nombre,
+                pais,
+                ranking
+            );
+
+            break;
+        }
+
+
+        case 2: {
+
+            int id;
+            int idUniversidad;
+            int idArea;
+
+            string nombre;
+            string pais;
+            string correo;
+
+            cout << "Digite el ID del investigador: ";
+            cin >> id;
+
+            cout << "Digite el nuevo nombre: ";
+            getline(cin >> ws, nombre);
+
+            cout << "Digite el ID de la nueva universidad: ";
+            cin >> idUniversidad;
+
+            cout << "Digite el nuevo pais: ";
+            getline(cin >> ws, pais);
+
+            cout << "Digite el ID de la nueva area: ";
+            cin >> idArea;
+
+            cout << "Digite el nuevo correo: ";
+            getline(cin >> ws, correo);
+
+            modificarInvestigador(
+                id,
+                nombre,
+                buscarUniversidad(idUniversidad),
+                pais,
+                buscarArea(idArea),
+                correo
+            );
+
+            break;
+        }
+
+
+        case 3: {
+
+            int id;
+            float factorImpacto;
+
+            string nombre;
+            string editorial;
+            string pais;
+            string cuartil;
+
+            cout << "Digite el ID de la revista: ";
+            cin >> id;
+
+            cout << "Digite el nuevo nombre: ";
+            getline(cin >> ws, nombre);
+
+            cout << "Digite la nueva editorial: ";
+            getline(cin >> ws, editorial);
+
+            cout << "Digite el nuevo pais: ";
+            getline(cin >> ws, pais);
+
+            cout << "Digite el nuevo factor de impacto: ";
+            cin >> factorImpacto;
+
+            cout << "Digite el nuevo cuartil (Q1, Q2, Q3 o Q4): ";
+            cin >> cuartil;
+
+            modificarRevista(
+                id,
+                nombre,
+                editorial,
+                pais,
+                factorImpacto,
+                cuartil
+            );
+
+            break;
+        }
+
+
+        case 0:
+
+            cout << "Volviendo a gestion de datos..." << endl;
+            break;
+
+
+        default:
+
+            cout << "Opcion invalida." << endl;
+            break;
+        }
+
+    } while (opcion != 0);
+}
+
+// ---------------------------------------------MENU ELIMINAR DATOS---------------------------------------------
+
+void menuEliminarDatos() {
+
+    int opcion;
+
+    do {
+
+        cout << endl;
+        cout << "====================================================" << endl;
+        cout << "                   ELIMINAR DATOS" << endl;
+        cout << "====================================================" << endl;
+        cout << "1. Eliminar universidad" << endl;
+        cout << "2. Eliminar investigador" << endl;
+        cout << "3. Eliminar publicacion" << endl;
+        cout << "0. Volver a gestion de datos" << endl;
+        cout << "====================================================" << endl;
+        cout << "Seleccione una opcion: ";
+
+        cin >> opcion;
+
+        cout << endl;
+
+        switch (opcion) {
+
+        case 1: {
+
+            int id;
+
+            cout << "Digite el ID de la universidad: ";
+            cin >> id;
+
+            eliminarUniversidad(id);
+
+            break;
+        }
+
+        case 2: {
+
+            int id;
+
+            cout << "Digite el ID del investigador: ";
+            cin >> id;
+
+            eliminarInvestigador(id);
+
+            actualizarTodosLosIndicesH();
+
+            break;
+        }
+
+        case 3: {
+
+            int id;
+
+            cout << "Digite el ID de la publicacion: ";
+            cin >> id;
+
+            eliminarPublicacion(id);
+
+            actualizarTodosLosIndicesH();
+
+            break;
+        }
+
+        case 0:
+
+            cout << "Volviendo a gestion de datos..." << endl;
+            break;
+
+        default:
+
+            cout << "Opcion invalida." << endl;
+            break;
+        }
+
+    } while (opcion != 0);
+}
+
+// ---------------------------------------------MENU DE GESTION DE DATOS---------------------------------------------
+
+void menuGestionDatos() {
+
+    int opcion;
+
+    do {
+
+        cout << endl;
+        cout << "====================================================" << endl;
+        cout << "                 GESTION DE DATOS" << endl;
+        cout << "====================================================" << endl;
+        cout << "1. Insertar datos" << endl;
+        cout << "2. Modificar datos" << endl;
+        cout << "3. Eliminar datos" << endl;
+        cout << "4. Buscar datos" << endl;
+        cout << "5. Mostrar datos" << endl;
+        cout << "0. Volver al menu principal" << endl;
+        cout << "====================================================" << endl;
+        cout << "Seleccione una opcion: ";
+
+        cin >> opcion;
+
+        cout << endl;
+
+        switch (opcion) {
+
+        case 1:
+            menuInsertarDatos();
+            break;
+
+        case 2:
+            menuModificarDatos();
+            break;
+
+        case 3:
+            menuEliminarDatos();
+            break;
+
+        case 4:
+            menuBuscarDatos();
+            break;
+
+        case 5:
+            menuMostrarDatos();
+            break;
+
+        case 0:
+            cout << "Volviendo al menu principal..." << endl;
+            break;
+
+        default:
+            cout << "Opcion invalida." << endl;
+            break;
+        }
+
+    } while (opcion != 0);
+}
+
+
+// ---------------------------------------------MENU PRINCIPAL---------------------------------------------
+
+
+
+void menuPrincipal() {
+
+    int opcion;
+
+    do {
+
+        cout << endl;
+        cout << "====================================================" << endl;
+        cout << " SISTEMA DE GESTION DE PRODUCCION CIENTIFICA" << endl;
+        cout << "====================================================" << endl;
+        cout << "1. Gestion de datos" << endl;
+        cout << "2. Consultas" << endl;
+        cout << "3. Reportes" << endl;
+        cout << "4. Metricas academicas" << endl;
+        cout << "0. Salir" << endl;
+        cout << "====================================================" << endl;
+        cout << "Seleccione una opcion: ";
+
+        cin >> opcion;
+
+        cout << endl;
+
+        switch (opcion) {
+
+        case 1:
+
+            menuGestionDatos();    
+
+            break;
+
+
+        case 2:
+
+            menuConsultas();
+
+            break;
+
+
+        case 3:
+
+            menuReportes();
+
+            break;
+
+
+        case 4: {
+
+            int idInvestigador;
+
+            cout << "Digite el ID del investigador: ";
+            cin >> idInvestigador;
+
+            investigador* inv =
+                buscarInvestigador(idInvestigador);
+
+            mostrarMetricas(inv);
+
+            break;
+        }
+
+
+        case 0:
+
+            cout << "Saliendo del sistema..." << endl;
+
+            break;
+
+
+        default:
+
+            cout << "Opcion invalida." << endl;
+
+            break;
+        }
+
+    } while (opcion != 0);
+}
+
+
+// ---------------------------------------------MAIN FINAL---------------------------------------------
 
 int main() {
-    // Al arrancar, todas las listas principales estan vacias
+
+    // Inicializar listas principales
     primerInvestigador = NULL;
     primeraRevista = NULL;
     primeraArea = NULL;
@@ -3266,828 +4529,19 @@ int main() {
     primerProyecto = NULL;
     primeraUniversidad = NULL;
 
-    cout << "|->->->->->->->->Sistema de Gestion de Produccion Cientifica<-<-<-<-<-<-<-<-<-" << endl;
 
-    // ---------------- UNIVERSIDADES ----------------
-    titulo("PRUEBA DE UNIVERSIDADES");
-    prueba("Insertar 4 validas");
-    insertarUniversidad(1, "ITCR", "Costa Rica", 15);
-    insertarUniversidad(2, "UCR", "Costa Rica", 10);
-    insertarUniversidad(3, "UNAM", "Mexico", 5);
-    insertarUniversidad(4, "Harvard", "Estados Unidos", 1);
-    prueba("ID repetido (debe dar error)");
-    insertarUniversidad(1, "Repetida", "Peru", 3);
-    prueba("Nombre vacio (debe dar error)");
-    insertarUniversidad(5, "", "Mexico", 5);
-    prueba("Ranking invalido (debe dar error)");
-    insertarUniversidad(5, "UNA", "Costa Rica", 0);
-    prueba("Lista actual");
-    mostrarUniversidades();
-    prueba("Buscar ID 3 y buscar ID 99 (no existe)");
-    mostrarUniversidad(buscarUniversidad(3));
-    mostrarUniversidad(buscarUniversidad(99));
-    prueba("Modificar ID 2");
-    modificarUniversidad(2, "UCR Sede Central", "Costa Rica", 9);
-    mostrarUniversidad(buscarUniversidad(2));
-    prueba("Modificar ID 99 (debe dar error)");
-    modificarUniversidad(99, "X", "Y", 1);
-    prueba("Eliminar el primero (ID 1)");
-    eliminarUniversidad(1);
-    prueba("Eliminar ID 99 (debe dar error)");
-    eliminarUniversidad(99);
-    mostrarUniversidades();
-
-    // ---------------- AREAS ----------------
-    titulo("PRUEBA DE AREAS");
-    prueba("Insertar 2 validas");
-    insertarArea(1, "Ciberseguridad", "Proteccion de sistemas y datos");
-    insertarArea(2, "Inteligencia Artificial", "Aprendizaje automatico y agentes");
-    prueba("ID repetido (debe dar error)");
-    insertarArea(1, "Repetida", "Prueba de ID repetido");
-    prueba("Nombre vacio (debe dar error)");
-    insertarArea(3, "", "Prueba de nombre vacio");
-    prueba("Lista actual");
-    mostrarAreas();
-    prueba("Buscar ID 2 y buscar ID 99 (no existe)");
-    mostrarArea(buscarArea(2));
-    mostrarArea(buscarArea(99));
-
-    // ---------------- INVESTIGADORES ----------------
-    titulo("PRUEBA DE INVESTIGADORES");
-    prueba("Insertar 2 validos");
-    insertarInvestigador(1, "Ana Mora", buscarUniversidad(2), "Costa Rica", buscarArea(1), "ana@tec.ac.cr", 0);
-    insertarInvestigador(2, "Luis Rojas", buscarUniversidad(4), "Mexico", buscarArea(2), "luis@unam.mx", 0);
-    prueba("ID repetido (debe dar error)");
-    insertarInvestigador(1, "Repetido", buscarUniversidad(2), "Peru", buscarArea(1), "r@x.com", 0);
-    prueba("Universidad que no existe (debe dar error)");
-    insertarInvestigador(3, "Sin Uni", buscarUniversidad(99), "Peru", buscarArea(1), "s@x.com", 0);
-    prueba("Area que no existe (debe dar error)");
-    insertarInvestigador(3, "Sin Area", buscarUniversidad(2), "Peru", buscarArea(99), "s@x.com", 0);
-    prueba("Correo invalido (debe dar error)");
-    insertarInvestigador(3, "Mal Correo", buscarUniversidad(2), "Peru", buscarArea(1), "correo.com", 0);
-    prueba("Lista actual");
-    mostrarInvestigadores();
-    prueba("Buscar ID 99 (no existe)");
-    mostrarInvestigador(buscarInvestigador(99));
-
-    // ---------------- COAUTORES ----------------
-    titulo("PRUEBA DE COAUTORES");
-    prueba("Insertar 2 validos al investigador 1 y 1 al investigador 2");
-    insertarCoautor(buscarInvestigador(1), 1, "Pedro Soto", "UCR", 3);
-    insertarCoautor(buscarInvestigador(1), 2, "Marta Diaz", "UNAM", 5);
-    insertarCoautor(buscarInvestigador(2), 3, "Raul Vega", "MIT", 1);
-    prueba("ID repetido en el mismo investigador (debe dar error)");
-    insertarCoautor(buscarInvestigador(1), 2, "Repetido", "UCR", 1);
-    prueba("ID repetido en otro investigador (debe dar error)");
-    insertarCoautor(buscarInvestigador(2), 1, "Repetido otro", "UCR", 1);
-    prueba("Investigador que no existe (debe dar error)");
-    insertarCoautor(buscarInvestigador(99), 4, "X", "UCR", 1);
-    prueba("Coautores del investigador 1 y del 2");
-    mostrarCoautores(buscarInvestigador(1));
-    mostrarCoautores(buscarInvestigador(2));
-    prueba("Buscar coautor 2 del investigador 1, y coautor 3 en el investigador 1 (no esta ahi)");
-    mostrarCoautor(buscarCoautor(buscarInvestigador(1), 2));
-    mostrarCoautor(buscarCoautor(buscarInvestigador(1), 3));
-
-    // ---------------- ELIMINAR CON DEPENDENCIAS ----------------
-    titulo("PRUEBA DE ELIMINAR CON INVESTIGADORES ASOCIADOS");
-    prueba("Eliminar UCR (ID 2), a la que pertenece Ana (debe dar error)");
-    eliminarUniversidad(2);
-    mostrarUniversidades();
-    
-      mostrarArea(buscarArea(99));   
-    
-    cout << endl;
-    cout << "Prueba de revistas" << endl;
-
-    insertarRevista(1, "Nature", "Springer Nature",
-                    "Reino Unido", 64.8, "Q1");
-
-    insertarRevista(2, "ACM Computing Surveys", "ACM",
-                    "Estados Unidos", 16.6, "Q1");
-
-    insertarRevista(3, "IEEE Access", "IEEE",
-                    "Estados Unidos", 3.9, "Q1");
-
-    mostrarRevistas();
+    // Cargar datos iniciales del sistema
+    precargarDatosA();
+    precargarDatosB();
 
 
-    titulo("PRUEBA DE PROYECTOS");
-
-prueba("Insertar 3 proyectos validos");
-
-insertarProyecto(
-    1,
-    "Inteligencia Artificial Aplicada",
-    1500000,
-    2024,
-    2026,
-    buscarInvestigador(1)
-);
-
-insertarProyecto(
-    2,
-    "Redes del Futuro",
-    900000,
-    2022,
-    2025,
-    buscarInvestigador(2)
-);
-
-insertarProyecto(
-    3,
-    "Ciberseguridad Aplicada",
-    2000000,
-    2023,
-    2027,
-    buscarInvestigador(1)
-);
-
-prueba("Lista de proyectos ordenada por anio");
-mostrarProyectos();
-
-prueba("ID repetido (debe dar error)");
-insertarProyecto(
-    1,
-    "Proyecto repetido",
-    500000,
-    2025,
-    2026,
-    buscarInvestigador(1)
-);
-
-prueba("Investigador que no existe (debe dar error)");
-insertarProyecto(
-    4,
-    "Proyecto sin investigador",
-    500000,
-    2025,
-    2026,
-    buscarInvestigador(99)
-);
-
-prueba("Buscar proyecto 2 y proyecto 99");
-mostrarProyecto(buscarProyecto(2));
-mostrarProyecto(buscarProyecto(99));
-
-    titulo("PRUEBA DE SUBLISTA pubInvestigador");
-
-// TEMPORAL: publicaciones creadas a mano
-    publicacion* p1 = new publicacion;
-    
-    p1->idPublicacion = 1;
-    p1->titulo = "Redes seguras";
-    p1->anio = 2021;
-    p1->tipo = "Articulo";
-    p1->cantidadCitas = 25;
-    p1->doi = "";
-    p1->investigadorPrincipal = buscarInvestigador(1);
-    p1->suRevista = NULL;
-    p1->suProyecto = NULL;
-    p1->citas = NULL;
-    p1->coautores = NULL;
-    p1->sig = NULL;
-
-
-    publicacion* p2 = new publicacion;
-    
-    p2->idPublicacion = 2;
-    p2->titulo = "Criptografia moderna";
-    p2->anio = 2022;
-    p2->tipo = "Libro";
-    p2->cantidadCitas = 18;
-    p2->doi = "";
-    p2->investigadorPrincipal = buscarInvestigador(1);
-    p2->suRevista = NULL;
-    p2->suProyecto = NULL;
-    p2->citas = NULL;
-    p2->coautores = NULL;
-    p2->sig = NULL;
-
-    prueba("Agregar 2 publicaciones a Ana");
-    agregarPublicacionAInvestigador(buscarInvestigador(1), p1);
-    agregarPublicacionAInvestigador(buscarInvestigador(1), p2);
-    prueba("Publicacion repetida (debe dar error)");
-    agregarPublicacionAInvestigador(buscarInvestigador(1), p1);
-    prueba("Investigador que no existe (debe dar error)");
-    agregarPublicacionAInvestigador(buscarInvestigador(99), p1);
-    prueba("Publicaciones de Ana y de Luis (Luis no tiene)");
-    mostrarPublicacionesInvestigador(buscarInvestigador(1));
-    mostrarPublicacionesInvestigador(buscarInvestigador(2));
-    prueba("Buscar la publicacion 2 en Ana, y la 5 (no esta)");
-    cout << (buscarPubInvestigador(buscarInvestigador(1), 2) != NULL ? "Encontrada" : "No esta") << endl;
-    cout << (buscarPubInvestigador(buscarInvestigador(1), 5) != NULL ? "Encontrada" : "No esta") << endl;
-
-
-    titulo("PRUEBA DE MODIFICAR INVESTIGADOR");
-    prueba("Modificar el investigador 1 (valido)");
-    modificarInvestigador(1, "Ana Mora Salas", buscarUniversidad(2), "Costa Rica", buscarArea(2), "ana.salas@ucr.ac.cr");
-    mostrarInvestigador(buscarInvestigador(1));
-    prueba("ID que no existe (debe dar error)");
-    modificarInvestigador(99, "X", buscarUniversidad(1), "CR", buscarArea(1), "x@x.com");
-    prueba("Correo invalido (debe dar error)");
-    modificarInvestigador(1, "Ana", buscarUniversidad(1), "CR", buscarArea(1), "correo.com");
-    prueba("Universidad que no existe (debe dar error)");
-    modificarInvestigador(1, "Ana", buscarUniversidad(99), "CR", buscarArea(1), "a@x.com");
-    prueba("El investigador 1 debe seguir con los datos de la primera modificacion");
-    mostrarInvestigador(buscarInvestigador(1));
-
-    titulo("PRUEBA DE METRICAS");
-
-// TEMPORAL: las 8 publicaciones del ejemplo del documento para Ana
-int citas[8] = {25, 18, 12, 8, 5, 4, 2, 1};
-
-for (int i = 0; i < 8; i++) {
-
-    publicacion* p = new publicacion;
-
-    p->idPublicacion = i + 1;
-    p->titulo = "Pub " + to_string(i + 1);
-    p->anio = 2020;
-    p->tipo = "Articulo";
-    p->cantidadCitas = citas[i];
-
-    // Inicializar los demas atributos
-    p->doi = "";
-    p->investigadorPrincipal = buscarInvestigador(1);
-    p->suRevista = NULL;
-    p->suProyecto = NULL;
-    p->citas = NULL;
-    p->coautores = NULL;
-    p->sig = NULL;
-
-    agregarPublicacionAInvestigador(
-        buscarInvestigador(1),
-        p
-    );
-}
-
-    prueba("Metricas de Ana (con publicaciones)");
-    mostrarMetricas(buscarInvestigador(1));
-    prueba("Metricas de Maria (sin publicaciones, no debe fallar)");
-    mostrarMetricas(buscarInvestigador(3));
-    prueba("Actualizar el indice H guardado y mostrar");
+    // Calcular los indices H con los datos precargados
     actualizarTodosLosIndicesH();
-    mostrarInvestigador(buscarInvestigador(1));
 
-titulo("PRUEBA DE PUBLICACIONES");
 
-prueba("Insertar 3 publicaciones validas");
+    // Iniciar el programa
+    menuPrincipal();
 
-insertarPublicacion(
-    101,
-    "Inteligencia Artificial y Educacion",
-    2024,
-    "Articulo",
-    15,
-    "10.1000/ia101",
-    buscarInvestigador(1),
-    buscarRevista(1),
-    buscarProyecto(1)
-);
-
-insertarPublicacion(
-    102,
-    "Seguridad en Redes Modernas",
-    2021,
-    "Conferencia",
-    8,
-    "10.1000/red102",
-    buscarInvestigador(2),
-    buscarRevista(2),
-    buscarProyecto(2)
-);
-
-insertarPublicacion(
-    103,
-    "Sistemas Distribuidos",
-    2023,
-    "Libro",
-    12,
-    "10.1000/sis103",
-    buscarInvestigador(1),
-    buscarRevista(3),
-    buscarProyecto(3)
-);
-
-
-prueba("Lista de publicaciones ordenada por anio");
-mostrarPublicaciones();
-
-
-prueba("ID repetido (debe dar error)");
-
-insertarPublicacion(
-    101,
-    "Publicacion repetida",
-    2025,
-    "Articulo",
-    5,
-    "10.1000/repetida",
-    buscarInvestigador(1),
-    buscarRevista(1),
-    buscarProyecto(1)
-);
-
-
-prueba("Investigador inexistente (debe dar error)");
-
-insertarPublicacion(
-    104,
-    "Publicacion sin investigador",
-    2025,
-    "Articulo",
-    5,
-    "10.1000/error104",
-    buscarInvestigador(99),
-    buscarRevista(1),
-    buscarProyecto(1)
-);
-
-
-prueba("Buscar publicacion 102 y publicacion 999");
-
-mostrarPublicacion(buscarPublicacion(102));
-
-mostrarPublicacion(buscarPublicacion(999));
-
-
-titulo("PRUEBA DE CITACIONES");
-
-prueba("Insertar 3 citaciones validas");
-
-insertarCitacion(
-    buscarPublicacion(101),
-    1001,
-    2025,
-    buscarPublicacion(102),
-    buscarInvestigador(2)
-);
-
-insertarCitacion(
-    buscarPublicacion(101),
-    1002,
-    2026,
-    buscarPublicacion(103),
-    buscarInvestigador(1)
-);
-
-insertarCitacion(
-    buscarPublicacion(102),
-    1003,
-    2024,
-    buscarPublicacion(101),
-    buscarInvestigador(1)
-);
-
-
-prueba("Mostrar citaciones de la publicacion 101");
-mostrarCitaciones(buscarPublicacion(101));
-
-
-prueba("Mostrar citaciones de la publicacion 102");
-mostrarCitaciones(buscarPublicacion(102));
-
-
-prueba("ID repetido (debe dar error)");
-
-insertarCitacion(
-    buscarPublicacion(102),
-    1001,
-    2025,
-    buscarPublicacion(103),
-    buscarInvestigador(1)
-);
-
-
-prueba("Publicacion citada inexistente (debe dar error)");
-
-insertarCitacion(
-    buscarPublicacion(999),
-    1004,
-    2025,
-    buscarPublicacion(101),
-    buscarInvestigador(1)
-);
-
-
-prueba("Publicacion citante inexistente (debe dar error)");
-
-insertarCitacion(
-    buscarPublicacion(101),
-    1005,
-    2025,
-    buscarPublicacion(999),
-    buscarInvestigador(1)
-);
-
-
-prueba("Autor citante inexistente (debe dar error)");
-
-insertarCitacion(
-    buscarPublicacion(101),
-    1006,
-    2025,
-    buscarPublicacion(102),
-    buscarInvestigador(99)
-);
-
-
-prueba("Buscar cita 1002 y cita 9999");
-
-mostrarCitacion(
-    buscarCitacion(buscarPublicacion(101), 1002)
-);
-
-mostrarCitacion(
-    buscarCitacion(buscarPublicacion(101), 9999)
-);
-
-
-
-titulo("PRUEBA DE COAUTORES DE PUBLICACION");
-
-prueba("Agregar coautores a las publicaciones");
-
-// Pedro Soto y Marta Diaz son coautores del investigador 1
-agregarCoautorAPublicacion(
-    buscarPublicacion(101),
-    buscarCoautor(buscarInvestigador(1), 1)
-);
-
-agregarCoautorAPublicacion(
-    buscarPublicacion(101),
-    buscarCoautor(buscarInvestigador(1), 2)
-);
-
-// Raul Vega pertenece a la sublista del investigador 2
-agregarCoautorAPublicacion(
-    buscarPublicacion(102),
-    buscarCoautor(buscarInvestigador(2), 3)
-);
-
-
-prueba("Mostrar coautores de la publicacion 101");
-mostrarCoautoresPublicacion(buscarPublicacion(101));
-
-
-prueba("Mostrar coautores de la publicacion 102");
-mostrarCoautoresPublicacion(buscarPublicacion(102));
-
-
-prueba("Coautor repetido en la publicacion 101 (debe dar error)");
-
-agregarCoautorAPublicacion(
-    buscarPublicacion(101),
-    buscarCoautor(buscarInvestigador(1), 1)
-);
-
-
-prueba("Publicacion inexistente (debe dar error)");
-
-agregarCoautorAPublicacion(
-    buscarPublicacion(999),
-    buscarCoautor(buscarInvestigador(1), 1)
-);
-
-
-prueba("Coautor inexistente (debe dar error)");
-
-agregarCoautorAPublicacion(
-    buscarPublicacion(101),
-    buscarCoautor(buscarInvestigador(1), 999)
-);
-
-
-prueba("Buscar coautor 2 en publicacion 101 y coautor 3");
-
-mostrarCoautor(
-    buscarCoautorPublicacion(buscarPublicacion(101), 2)
-);
-
-mostrarCoautor(
-    buscarCoautorPublicacion(buscarPublicacion(101), 3)
-);
-
-
-prueba("Cantidad de coautores de la publicacion 101");
-
-cout << "Cantidad: "
-     << contarCoautoresPublicacion(buscarPublicacion(101))
-     << endl;
-
-
-titulo("PRUEBA DE MODIFICAR REVISTA");
-
-prueba("Modificar revista ID 3");
-
-modificarRevista(
-    3,
-    "AA Science",
-    "Editorial Cientifica",
-    "Costa Rica",
-    7.5,
-    "Q2"
-);
-
-prueba("Lista despues de modificar");
-mostrarRevistas();
-
-
-prueba("Modificar revista inexistente (debe dar error)");
-
-modificarRevista(
-    99,
-    "Revista inexistente",
-    "Editorial",
-    "Costa Rica",
-    5.0,
-    "Q1"
-);
-
-
-prueba("Cuartil invalido (debe dar error)");
-
-modificarRevista(
-    3,
-    "AA Science",
-    "Editorial Cientifica",
-    "Costa Rica",
-    7.5,
-    "Q9"
-);
-
-prueba("Comprobar que la publicacion sigue enlazada a la revista modificada");
-mostrarPublicacion(buscarPublicacion(103));
-
-
-titulo("PRUEBA DE ELIMINAR PUBLICACION");
-
-prueba("Crear publicacion temporal 104");
-
-insertarPublicacion(
-    104,
-    "Publicacion Temporal",
-    2025,
-    "Articulo",
-    4,
-    "10.1000/temp104",
-    buscarInvestigador(1),
-    buscarRevista(1),
-    buscarProyecto(1)
-);
-
-
-// Agregarle un coautor para probar que tambien se limpia
-agregarCoautorAPublicacion(
-    buscarPublicacion(104),
-    buscarCoautor(buscarInvestigador(1), 1)
-);
-
-
-// Agregar una cita propia de la publicacion temporal
-insertarCitacion(
-    buscarPublicacion(104),
-    2001,
-    2026,
-    buscarPublicacion(102),
-    buscarInvestigador(2)
-);
-
-
-// Crear una cita en otra publicacion que apunte a la 104.
-// Esto permite comprobar que tampoco queda un puntero colgante.
-insertarCitacion(
-    buscarPublicacion(102),
-    2002,
-    2026,
-    buscarPublicacion(104),
-    buscarInvestigador(1)
-);
-
-
-prueba("Mostrar publicacion temporal antes de eliminar");
-mostrarPublicacion(buscarPublicacion(104));
-
-prueba("Coautores de la publicacion temporal");
-mostrarCoautoresPublicacion(buscarPublicacion(104));
-
-prueba("Citaciones de la publicacion temporal");
-mostrarCitaciones(buscarPublicacion(104));
-
-
-prueba("Eliminar publicacion 104");
-eliminarPublicacion(104);
-
-
-prueba("Buscar publicacion 104 despues de eliminar");
-mostrarPublicacion(buscarPublicacion(104));
-
-
-prueba("Comprobar que se elimino de la sublista del investigador");
-
-cout << (
-    buscarPubInvestigador(buscarInvestigador(1), 104) == NULL
-    ? "Ya no esta en el investigador"
-    : "ERROR: todavia esta en el investigador"
-) << endl;
-
-
-prueba("Comprobar que se elimino de la sublista de la revista");
-
-cout << (
-    buscarPubRevista(buscarRevista(1), 104) == NULL
-    ? "Ya no esta en la revista"
-    : "ERROR: todavia esta en la revista"
-) << endl;
-
-
-prueba("Comprobar que la cita que apuntaba a 104 tambien desaparecio");
-
-mostrarCitacion(
-    buscarCitacion(buscarPublicacion(102), 2002)
-);
-
-
-prueba("Lista circular despues de eliminar 104");
-mostrarPublicaciones();
-
-
-prueba("Eliminar publicacion inexistente (debe dar error)");
-eliminarPublicacion(999);
-
-
-titulo("PRUEBA DE PRECARGA DE DATOS B");
-
-precargarDatosB();
-
-
-prueba("Comprobar las 5 revistas nuevas");
-
-mostrarRevista(buscarRevista(11));
-mostrarRevista(buscarRevista(12));
-mostrarRevista(buscarRevista(13));
-mostrarRevista(buscarRevista(14));
-mostrarRevista(buscarRevista(15));
-
-
-prueba("Comprobar los 5 proyectos nuevos");
-
-mostrarProyecto(buscarProyecto(11));
-mostrarProyecto(buscarProyecto(12));
-mostrarProyecto(buscarProyecto(13));
-mostrarProyecto(buscarProyecto(14));
-mostrarProyecto(buscarProyecto(15));
-
-
-prueba("Comprobar las 5 publicaciones nuevas");
-
-mostrarPublicacion(buscarPublicacion(201));
-mostrarPublicacion(buscarPublicacion(202));
-mostrarPublicacion(buscarPublicacion(203));
-mostrarPublicacion(buscarPublicacion(204));
-mostrarPublicacion(buscarPublicacion(205));
-
-
-prueba("Comprobar las citaciones de la publicacion 201");
-
-mostrarCitaciones(buscarPublicacion(201));
-
-
-prueba("Comprobar los coautores de la publicacion 201");
-
-mostrarCoautoresPublicacion(buscarPublicacion(201));
-
-
-prueba("Comprobar enlace publicacion - investigador");
-
-cout << (
-    buscarPubInvestigador(buscarInvestigador(1), 201) != NULL
-    ? "Publicacion 201 encontrada en investigador 1"
-    : "ERROR: publicacion 201 no esta en investigador 1"
-) << endl;
-
-
-prueba("Comprobar enlace publicacion - revista");
-
-cout << (
-    buscarPubRevista(buscarRevista(11), 201) != NULL
-    ? "Publicacion 201 encontrada en revista 11"
-    : "ERROR: publicacion 201 no esta en revista 11"
-) << endl;
-
-
-titulo("PRUEBA DE SUBLISTA pubRevista");
-
-
-prueba("Publicaciones de la revista 11");
-
-mostrarPublicacionesRevista(
-    buscarRevista(11)
-);
-
-
-prueba("Revista 15 sin publicaciones");
-
-mostrarPublicacionesRevista(
-    buscarRevista(15)
-);
-
-
-prueba("Revista inexistente");
-
-mostrarPublicacionesRevista(
-    buscarRevista(99)
-);
-
-titulo("CONSULTA 3 - PUBLICACION CON MAS CITAS");
-
-consultaPublicacionMasCitada();
-
-titulo("CONSULTA 4 - REVISTA CON MAYOR FACTOR DE IMPACTO");
-
-consultaRevistaMayorImpacto();
-
-titulo("CONSULTA 7 - AREA CON MAS PUBLICACIONES");
-
-consultaAreaMasPublicaciones();
-
-titulo("CONSULTA 8 - ANIO CON MAYOR PRODUCCION");
-
-consultaAnioMayorProduccion();
-
-titulo("CONSULTA 9 - PUBLICACION CON MAS AUTORES");
-
-consultaPublicacionMasAutores();
-
-titulo("CONSULTA 10 - INVESTIGADOR CON MAS ARTICULOS Q1");
-
-consultaInvestigadorMasArticulosQ1();
-
-titulo("REPORTE 2 - PUBLICACIONES POR ANIO");
-
-reportePublicacionesPorAnio();
-
-titulo("REPORTE 3 - PUBLICACIONES POR CANTIDAD DE CITAS");
-
-reportePublicacionesPorCitas();
-
-titulo("REPORTE 4 - REVISTAS Y FACTOR DE IMPACTO");
-
-reporteRevistasFactorImpacto();
-
-titulo("REPORTE 6 - PUBLICACIONES DE UNA REVISTA");
-
-prueba("Revista 11, que tiene publicaciones");
-reportePublicacionesDeRevista(11);
-
-prueba("Revista 15, que no tiene publicaciones");
-reportePublicacionesDeRevista(15);
-
-prueba("Revista inexistente");
-reportePublicacionesDeRevista(99);
-
-titulo("REPORTE 7 - PUBLICACIONES DE UN AREA");
-
-prueba("Area 2, que tiene publicaciones");
-reportePublicacionesDeArea(2);
-
-prueba("Area 1, que actualmente no tiene publicaciones");
-reportePublicacionesDeArea(1);
-
-prueba("Area inexistente");
-reportePublicacionesDeArea(99);
-
-titulo("REPORTE 1 - INVESTIGADORES Y PUBLICACIONES");
-reporteInvestigadoresConPublicaciones();
-
-
-titulo("REPORTE 5 - RED DE COAUTORIA");
-prueba("Red de coautoria del investigador 1");
-reporteRedCoautoria(1);
-
-
-titulo("REPORTE 8 - INVESTIGADORES POR UNIVERSIDAD");
-reporteInvestigadoresPorUniversidad();
-
-
-titulo("REPORTE 9 - INVESTIGADORES POR INDICE H");
-reporteInvestigadoresPorIndiceH();
-
-titulo("CONSULTA 1 - INVESTIGADOR CON MAYOR INDICE H");
-consultaMayorIndiceH();
-
-
-titulo("CONSULTA 2 - INVESTIGADOR CON MAS CITAS");
-consultaMasCitas();
-
-
-titulo("CONSULTA 5 - INVESTIGADOR CON MAS COAUTORES");
-consultaMasCoautores();
-
-
-titulo("CONSULTA 6 - UNIVERSIDAD CON MAS INVESTIGADORES");
-consultaUniversidadMasInvestigadores();
 
     return 0;
 }
