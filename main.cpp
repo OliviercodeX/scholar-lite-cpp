@@ -892,7 +892,6 @@ void mostrarMetricas(investigador* inv) {
     cout << "   Produccion cientifica: " << totalPub << " publicaciones" << endl;
 }
 
-
 //---------------------------------------------Consultas de A---------------------------------------------
 
 // Consulta 1: investigador(es) con el mayor indice H (muestra todos los empates)
@@ -1126,6 +1125,7 @@ void reporteInvestigadoresPorIndiceH() {
 
     delete[] orden;
 }
+
 //---------------------------------------------Precarga de datos de A---------------------------------------------
 
 void precargarUniversidades() {
@@ -1836,6 +1836,33 @@ void mostrarPublicaciones() {
 }
 
 
+//---------------------------------------------Mostrar publicaciones de una revista---------------------------------------------
+
+void mostrarPublicacionesRevista(revista* rev) {
+
+    if (rev == NULL) {
+        cout << "Revista no encontrada." << endl;
+        return;
+    }
+
+    if (rev->publicaciones == NULL) {
+        cout << "La revista " << rev->nombre
+             << " no tiene publicaciones registradas." << endl;
+        return;
+    }
+
+    cout << "Publicaciones de la revista " << rev->nombre << ":" << endl;
+
+    pubRevista* aux = rev->publicaciones;
+
+    while (aux != NULL) {
+
+        mostrarPublicacion(aux->laPublicacion);
+
+        aux = aux->sig;
+    }
+}
+
 //---------------------------------------------Parte de Gerald - Citaciones---------------------------------------------
 
 // Busca una citacion por ID dentro de una publicacion.
@@ -2378,6 +2405,844 @@ bool eliminarPublicacion(int id) {
 }
 
 
+//---------------------------------------------Precarga de datos de B---------------------------------------------
+
+void precargarRevistasB() {
+
+    insertarRevista(
+        11,
+        "Artificial Intelligence Research",
+        "Tech Press",
+        "Estados Unidos",
+        14.2,
+        "Q1"
+    );
+
+    insertarRevista(
+        12,
+        "Cybersecurity Today",
+        "Secure Press",
+        "Reino Unido",
+        11.5,
+        "Q1"
+    );
+
+    insertarRevista(
+        13,
+        "Data Science Review",
+        "Data Editorial",
+        "Costa Rica",
+        8.4,
+        "Q2"
+    );
+
+    insertarRevista(
+        14,
+        "Networks and Systems",
+        "Global Networks",
+        "Alemania",
+        5.1,
+        "Q3"
+    );
+
+    insertarRevista(
+        15,
+        "Software Engineering Journal",
+        "Computing House",
+        "Canada",
+        3.6,
+        "Q4"
+    );
+}
+
+
+void precargarProyectosB() {
+
+    insertarProyecto(
+        11,
+        "Educacion con Inteligencia Artificial",
+        1200000,
+        2019,
+        2023,
+        buscarInvestigador(1)
+    );
+
+    insertarProyecto(
+        12,
+        "Seguridad de Redes",
+        950000,
+        2020,
+        2024,
+        buscarInvestigador(2)
+    );
+
+    insertarProyecto(
+        13,
+        "Analisis de Datos Cientificos",
+        800000,
+        2021,
+        2025,
+        buscarInvestigador(1)
+    );
+
+    insertarProyecto(
+        14,
+        "Sistemas Distribuidos Inteligentes",
+        1100000,
+        2022,
+        2026,
+        buscarInvestigador(1)
+    );
+
+    insertarProyecto(
+        15,
+        "Infraestructura de Redes",
+        700000,
+        2023,
+        2027,
+        buscarInvestigador(2)
+    );
+}
+
+
+void precargarPublicacionesB() {
+
+    insertarPublicacion(
+        201,
+        "Aprendizaje Automatico en Educacion",
+        2020,
+        "Articulo",
+        3,
+        "10.2000/pub201",
+        buscarInvestigador(1),
+        buscarRevista(11),
+        buscarProyecto(11)
+    );
+
+    insertarPublicacion(
+        202,
+        "Proteccion de Redes Universitarias",
+        2021,
+        "Articulo",
+        1,
+        "10.2000/pub202",
+        buscarInvestigador(2),
+        buscarRevista(12),
+        buscarProyecto(12)
+    );
+
+    insertarPublicacion(
+        203,
+        "Analisis Computacional de Datos",
+        2021,
+        "Libro",
+        0,
+        "10.2000/pub203",
+        buscarInvestigador(1),
+        buscarRevista(13),
+        buscarProyecto(13)
+    );
+
+    insertarPublicacion(
+        204,
+        "Modelos Inteligentes Distribuidos",
+        2023,
+        "Articulo",
+        1,
+        "10.2000/pub204",
+        buscarInvestigador(1),
+        buscarRevista(11),
+        buscarProyecto(14)
+    );
+
+    insertarPublicacion(
+        205,
+        "Arquitecturas de Redes Modernas",
+        2024,
+        "Conferencia",
+        0,
+        "10.2000/pub205",
+        buscarInvestigador(2),
+        buscarRevista(14),
+        buscarProyecto(15)
+    );
+}
+
+
+void precargarCitacionesB() {
+
+    // La publicacion 201 recibe tres citas
+    insertarCitacion(
+        buscarPublicacion(201),
+        3001,
+        2021,
+        buscarPublicacion(202),
+        buscarInvestigador(2)
+    );
+
+    insertarCitacion(
+        buscarPublicacion(201),
+        3002,
+        2022,
+        buscarPublicacion(203),
+        buscarInvestigador(1)
+    );
+
+    insertarCitacion(
+        buscarPublicacion(201),
+        3003,
+        2023,
+        buscarPublicacion(204),
+        buscarInvestigador(1)
+    );
+
+    // La publicacion 202 recibe una cita
+    insertarCitacion(
+        buscarPublicacion(202),
+        3004,
+        2024,
+        buscarPublicacion(205),
+        buscarInvestigador(2)
+    );
+
+    // La publicacion 204 recibe una cita
+    insertarCitacion(
+        buscarPublicacion(204),
+        3005,
+        2024,
+        buscarPublicacion(201),
+        buscarInvestigador(1)
+    );
+}
+
+
+void precargarCoautoresPublicacionB() {
+
+    // Publicacion 201 tiene dos coautores
+    agregarCoautorAPublicacion(
+        buscarPublicacion(201),
+        buscarCoautor(buscarInvestigador(1), 1)
+    );
+
+    agregarCoautorAPublicacion(
+        buscarPublicacion(201),
+        buscarCoautor(buscarInvestigador(1), 2)
+    );
+
+    // Publicacion 202 tiene un coautor
+    agregarCoautorAPublicacion(
+        buscarPublicacion(202),
+        buscarCoautor(buscarInvestigador(2), 3)
+    );
+
+    // Publicacion 203 tiene un coautor
+    agregarCoautorAPublicacion(
+        buscarPublicacion(203),
+        buscarCoautor(buscarInvestigador(1), 1)
+    );
+
+    // Publicacion 204 tiene un coautor
+    agregarCoautorAPublicacion(
+        buscarPublicacion(204),
+        buscarCoautor(buscarInvestigador(1), 2)
+    );
+}
+
+
+// Carga todos los datos correspondientes a Persona B.
+// Los investigadores y coautores deben existir antes de llamar esta funcion.
+void precargarDatosB() {
+
+    precargarRevistasB();
+    precargarProyectosB();
+    precargarPublicacionesB();
+    precargarCitacionesB();
+    precargarCoautoresPublicacionB();
+}
+
+//---------------------------------------------Consulta 3---------------------------------------------
+
+void consultaPublicacionMasCitada() {
+
+    if (primeraPublicacion == NULL) {
+        cout << "No hay publicaciones registradas." << endl;
+        return;
+    }
+
+    // Primero buscamos la mayor cantidad de citas
+    int mayorCitas = primeraPublicacion->cantidadCitas;
+
+    publicacion* aux = primeraPublicacion->sig;
+
+    while (aux != primeraPublicacion) {
+
+        if (aux->cantidadCitas > mayorCitas) {
+            mayorCitas = aux->cantidadCitas;
+        }
+
+        aux = aux->sig;
+    }
+
+
+    // Luego mostramos todas las publicaciones que tengan esa cantidad
+    cout << "Publicacion(es) con mayor cantidad de citas:" << endl;
+
+    aux = primeraPublicacion;
+
+    do {
+
+        if (aux->cantidadCitas == mayorCitas) {
+            mostrarPublicacion(aux);
+        }
+
+        aux = aux->sig;
+
+    } while (aux != primeraPublicacion);
+
+    cout << "Mayor cantidad de citas: " << mayorCitas << endl;
+}
+
+//---------------------------------------------Consulta 4---------------------------------------------
+
+void consultaRevistaMayorImpacto() {
+
+    if (primeraRevista == NULL) {
+        cout << "No hay revistas registradas." << endl;
+        return;
+    }
+
+    // Primero buscamos el mayor factor de impacto
+    float mayorImpacto = primeraRevista->factorImpacto;
+
+    revista* aux = primeraRevista->sig;
+
+    while (aux != NULL) {
+
+        if (aux->factorImpacto > mayorImpacto) {
+            mayorImpacto = aux->factorImpacto;
+        }
+
+        aux = aux->sig;
+    }
+
+
+    // Luego mostramos todas las revistas que tengan ese valor
+    cout << "Revista(s) con mayor factor de impacto:" << endl;
+
+    aux = primeraRevista;
+
+    while (aux != NULL) {
+
+        if (aux->factorImpacto == mayorImpacto) {
+            mostrarRevista(aux);
+        }
+
+        aux = aux->sig;
+    }
+
+    cout << "Mayor factor de impacto: "
+         << mayorImpacto << endl;
+}
+
+//---------------------------------------------Consulta 7---------------------------------------------
+
+// Cuenta cuantas publicaciones pertenecen a investigadores de un area.
+int contarPublicacionesArea(areaInvestigacion* area) {
+
+    if (area == NULL || primeraPublicacion == NULL) {
+        return 0;
+    }
+
+    int total = 0;
+
+    publicacion* pub = primeraPublicacion;
+
+    do {
+
+        if (pub->investigadorPrincipal != NULL &&
+            pub->investigadorPrincipal->suArea == area) {
+
+            total++;
+        }
+
+        pub = pub->sig;
+
+    } while (pub != primeraPublicacion);
+
+    return total;
+}
+
+
+// Muestra el area o las areas con mayor cantidad de publicaciones.
+void consultaAreaMasPublicaciones() {
+
+    if (primeraArea == NULL) {
+        cout << "No hay areas de investigacion registradas." << endl;
+        return;
+    }
+
+    if (primeraPublicacion == NULL) {
+        cout << "No hay publicaciones registradas." << endl;
+        return;
+    }
+
+
+    // Primero buscamos la mayor cantidad de publicaciones.
+    int mayorCantidad = 0;
+
+    areaInvestigacion* area = primeraArea;
+
+    while (area != NULL) {
+
+        int cantidad = contarPublicacionesArea(area);
+
+        if (cantidad > mayorCantidad) {
+            mayorCantidad = cantidad;
+        }
+
+        area = area->sig;
+    }
+
+
+    cout << "Area(s) con mayor cantidad de publicaciones:" << endl;
+
+    // Segundo recorrido para mostrar posibles empates.
+    area = primeraArea;
+
+    while (area != NULL) {
+
+        int cantidad = contarPublicacionesArea(area);
+
+        if (cantidad == mayorCantidad) {
+
+            mostrarArea(area);
+
+            cout << "Cantidad de publicaciones: "
+                 << cantidad << endl;
+        }
+
+        area = area->sig;
+    }
+}
+
+//---------------------------------------------Consulta 8---------------------------------------------
+
+// Cuenta cuantas publicaciones existen en un anio especifico.
+int contarPublicacionesAnio(int anio) {
+
+    if (primeraPublicacion == NULL) {
+        return 0;
+    }
+
+    int total = 0;
+
+    publicacion* pub = primeraPublicacion;
+
+    do {
+
+        if (pub->anio == anio) {
+            total++;
+        }
+
+        pub = pub->sig;
+
+    } while (pub != primeraPublicacion);
+
+    return total;
+}
+
+
+// Muestra el anio o los anios con mayor produccion cientifica.
+void consultaAnioMayorProduccion() {
+
+    if (primeraPublicacion == NULL) {
+        cout << "No hay publicaciones registradas." << endl;
+        return;
+    }
+
+    int mayorCantidad = 0;
+
+    publicacion* pub = primeraPublicacion;
+
+    // Primera pasada: encontrar la mayor cantidad de publicaciones en un anio
+    do {
+
+        int cantidad = contarPublicacionesAnio(pub->anio);
+
+        if (cantidad > mayorCantidad) {
+            mayorCantidad = cantidad;
+        }
+
+        pub = pub->sig;
+
+    } while (pub != primeraPublicacion);
+
+
+    cout << "Anio(s) con mayor produccion cientifica:" << endl;
+
+    // Como la lista esta ordenada por anio, evitamos mostrar
+    // el mismo anio mas de una vez.
+    bool primerAnioMostrado = true;
+    int ultimoAnioMostrado = 0;
+
+    pub = primeraPublicacion;
+
+    do {
+
+        int cantidad = contarPublicacionesAnio(pub->anio);
+
+        if (cantidad == mayorCantidad &&
+            (primerAnioMostrado || pub->anio != ultimoAnioMostrado)) {
+
+            cout << "Anio: " << pub->anio
+                 << " | Publicaciones: " << cantidad
+                 << endl;
+
+            ultimoAnioMostrado = pub->anio;
+            primerAnioMostrado = false;
+        }
+
+        pub = pub->sig;
+
+    } while (pub != primeraPublicacion);
+}
+
+//---------------------------------------------Consulta 9---------------------------------------------
+
+// Cuenta al investigador principal y a todos los coautores.
+int contarAutoresPublicacion(publicacion* pub) {
+
+    if (pub == NULL) {
+        return 0;
+    }
+
+    int total = contarCoautoresPublicacion(pub);
+
+    // El investigador principal tambien cuenta como autor.
+    if (pub->investigadorPrincipal != NULL) {
+        total++;
+    }
+
+    return total;
+}
+
+
+// Muestra la publicacion o publicaciones con mayor cantidad de autores.
+void consultaPublicacionMasAutores() {
+
+    if (primeraPublicacion == NULL) {
+        cout << "No hay publicaciones registradas." << endl;
+        return;
+    }
+
+    int mayorCantidad = 0;
+
+    publicacion* pub = primeraPublicacion;
+
+    // Primera pasada: buscar la mayor cantidad de autores.
+    do {
+
+        int cantidad = contarAutoresPublicacion(pub);
+
+        if (cantidad > mayorCantidad) {
+            mayorCantidad = cantidad;
+        }
+
+        pub = pub->sig;
+
+    } while (pub != primeraPublicacion);
+
+
+    cout << "Publicacion(es) con mayor cantidad de autores:" << endl;
+
+    // Segunda pasada: mostrar todas las que empaten.
+    pub = primeraPublicacion;
+
+    do {
+
+        int cantidad = contarAutoresPublicacion(pub);
+
+        if (cantidad == mayorCantidad) {
+
+            mostrarPublicacion(pub);
+
+            cout << "Cantidad total de autores: "
+                 << cantidad << endl;
+        }
+
+        pub = pub->sig;
+
+    } while (pub != primeraPublicacion);
+}
+
+//---------------------------------------------Consulta 10---------------------------------------------
+
+// Cuenta cuantos articulos de un investigador fueron publicados en revistas Q1.
+int contarArticulosQ1(investigador* inv) {
+
+    if (inv == NULL) {
+        return 0;
+    }
+
+    int total = 0;
+
+    pubInvestigador* aux = inv->publicaciones;
+
+    while (aux != NULL) {
+
+        publicacion* pub = aux->laPublicacion;
+
+        if (pub != NULL &&
+            pub->tipo == "Articulo" &&
+            pub->suRevista != NULL &&
+            pub->suRevista->cuartil == "Q1") {
+
+            total++;
+        }
+
+        aux = aux->sig;
+    }
+
+    return total;
+}
+
+
+// Muestra el investigador o investigadores con mas articulos en revistas Q1.
+void consultaInvestigadorMasArticulosQ1() {
+
+    if (primerInvestigador == NULL) {
+        cout << "No hay investigadores registrados." << endl;
+        return;
+    }
+
+    int mayorCantidad = 0;
+
+    investigador* inv = primerInvestigador;
+
+    // Primera pasada: encontrar la mayor cantidad.
+    while (inv != NULL) {
+
+        int cantidad = contarArticulosQ1(inv);
+
+        if (cantidad > mayorCantidad) {
+            mayorCantidad = cantidad;
+        }
+
+        inv = inv->sig;
+    }
+
+
+    if (mayorCantidad == 0) {
+        cout << "No hay articulos publicados en revistas Q1." << endl;
+        return;
+    }
+
+
+    cout << "Investigador(es) con mas articulos en revistas Q1:" << endl;
+
+    // Segunda pasada: mostrar posibles empates.
+    inv = primerInvestigador;
+
+    while (inv != NULL) {
+
+        int cantidad = contarArticulosQ1(inv);
+
+        if (cantidad == mayorCantidad) {
+
+            mostrarInvestigador(inv);
+
+            cout << "Articulos publicados en revistas Q1: "
+                 << cantidad << endl;
+        }
+
+        inv = inv->sig;
+    }
+}
+
+//---------------------------------------------Reporte 2---------------------------------------------
+
+void reportePublicacionesPorAnio() {
+
+    if (primeraPublicacion == NULL) {
+        cout << "No hay publicaciones registradas." << endl;
+        return;
+    }
+
+    cout << "PUBLICACIONES ORGANIZADAS POR ANIO" << endl;
+
+    publicacion* pub = primeraPublicacion;
+    int anioActual = -1;
+
+    do {
+
+        // Como la lista circular ya esta ordenada por anio,
+        // cuando cambia el anio mostramos un nuevo encabezado.
+        if (pub->anio != anioActual) {
+
+            anioActual = pub->anio;
+
+            cout << endl;
+            cout << "Anio " << anioActual << ":" << endl;
+        }
+
+        mostrarPublicacion(pub);
+
+        pub = pub->sig;
+
+    } while (pub != primeraPublicacion);
+}
+
+//---------------------------------------------Reporte 3---------------------------------------------
+
+void reportePublicacionesPorCitas() {
+
+    if (primeraPublicacion == NULL) {
+        cout << "No hay publicaciones registradas." << endl;
+        return;
+    }
+
+    // Primero contamos cuantas publicaciones existen.
+    int cantidad = 0;
+
+    publicacion* pub = primeraPublicacion;
+
+    do {
+        cantidad++;
+        pub = pub->sig;
+    } while (pub != primeraPublicacion);
+
+
+    // Creamos un arreglo de punteros.
+    // No copiamos las publicaciones, solamente guardamos sus direcciones.
+    publicacion** orden = new publicacion*[cantidad];
+
+    pub = primeraPublicacion;
+
+    for (int i = 0; i < cantidad; i++) {
+        orden[i] = pub;
+        pub = pub->sig;
+    }
+
+
+    // Ordenamiento por insercion:
+    // mayor cantidad de citas primero.
+    for (int i = 1; i < cantidad; i++) {
+
+        publicacion* actual = orden[i];
+        int j = i - 1;
+
+        while (j >= 0 &&
+               orden[j]->cantidadCitas < actual->cantidadCitas) {
+
+            orden[j + 1] = orden[j];
+            j--;
+        }
+
+        orden[j + 1] = actual;
+    }
+
+
+    cout << "PUBLICACIONES ORDENADAS POR CANTIDAD DE CITAS" << endl;
+
+    for (int i = 0; i < cantidad; i++) {
+
+        cout << endl;
+        cout << "Posicion " << (i + 1) << ":" << endl;
+
+        mostrarPublicacion(orden[i]);
+    }
+
+
+    delete[] orden;
+}
+
+//---------------------------------------------Reporte 4---------------------------------------------
+
+void reporteRevistasFactorImpacto() {
+
+    if (primeraRevista == NULL) {
+        cout << "No hay revistas registradas." << endl;
+        return;
+    }
+
+    cout << "REVISTAS Y SU FACTOR DE IMPACTO" << endl;
+    cout << endl;
+
+    revista* rev = primeraRevista;
+
+    while (rev != NULL) {
+
+        cout << "ID: " << rev->idRevista
+             << " | Revista: " << rev->nombre
+             << " | Factor de impacto: " << rev->factorImpacto
+             << " | Cuartil: " << rev->cuartil
+             << endl;
+
+        rev = rev->sig;
+    }
+}
+
+//---------------------------------------------Reporte 6---------------------------------------------
+
+void reportePublicacionesDeRevista(int idRevista) {
+
+    revista* rev = buscarRevista(idRevista);
+
+    if (rev == NULL) {
+        cout << "No existe una revista con ese ID." << endl;
+        return;
+    }
+
+    cout << "PUBLICACIONES DE LA REVISTA: "
+         << rev->nombre << endl;
+    cout << endl;
+
+    mostrarPublicacionesRevista(rev);
+}
+
+//---------------------------------------------Reporte 7---------------------------------------------
+
+void reportePublicacionesDeArea(int idArea) {
+
+    areaInvestigacion* area = buscarArea(idArea);
+
+    if (area == NULL) {
+        cout << "No existe un area de investigacion con ese ID." << endl;
+        return;
+    }
+
+    if (primeraPublicacion == NULL) {
+        cout << "No hay publicaciones registradas." << endl;
+        return;
+    }
+
+    cout << "PUBLICACIONES DEL AREA: "
+         << area->nombreArea << endl;
+    cout << endl;
+
+    bool encontrada = false;
+
+    publicacion* pub = primeraPublicacion;
+
+    do {
+
+        if (pub->investigadorPrincipal != NULL &&
+            pub->investigadorPrincipal->suArea == area) {
+
+            mostrarPublicacion(pub);
+            encontrada = true;
+        }
+
+        pub = pub->sig;
+
+    } while (pub != primeraPublicacion);
+
+
+    if (!encontrada) {
+        cout << "No hay publicaciones asociadas a esta area." << endl;
+    }
+}
+
 //----------------------------------------------------------------------------------------------------------------------
 
 
@@ -2400,10 +3265,6 @@ int main() {
     primeraPublicacion = NULL;
     primerProyecto = NULL;
     primeraUniversidad = NULL;
-
-    // Datos precargados
-    precargarDatosA();
-    // precargarDatosB();   // Gerald agrega aqui sus precargas
 
     cout << "|->->->->->->->->Sistema de Gestion de Produccion Cientifica<-<-<-<-<-<-<-<-<-" << endl;
 
@@ -2510,16 +3371,98 @@ int main() {
 
     mostrarRevistas();
 
+
+    titulo("PRUEBA DE PROYECTOS");
+
+prueba("Insertar 3 proyectos validos");
+
+insertarProyecto(
+    1,
+    "Inteligencia Artificial Aplicada",
+    1500000,
+    2024,
+    2026,
+    buscarInvestigador(1)
+);
+
+insertarProyecto(
+    2,
+    "Redes del Futuro",
+    900000,
+    2022,
+    2025,
+    buscarInvestigador(2)
+);
+
+insertarProyecto(
+    3,
+    "Ciberseguridad Aplicada",
+    2000000,
+    2023,
+    2027,
+    buscarInvestigador(1)
+);
+
+prueba("Lista de proyectos ordenada por anio");
+mostrarProyectos();
+
+prueba("ID repetido (debe dar error)");
+insertarProyecto(
+    1,
+    "Proyecto repetido",
+    500000,
+    2025,
+    2026,
+    buscarInvestigador(1)
+);
+
+prueba("Investigador que no existe (debe dar error)");
+insertarProyecto(
+    4,
+    "Proyecto sin investigador",
+    500000,
+    2025,
+    2026,
+    buscarInvestigador(99)
+);
+
+prueba("Buscar proyecto 2 y proyecto 99");
+mostrarProyecto(buscarProyecto(2));
+mostrarProyecto(buscarProyecto(99));
+
     titulo("PRUEBA DE SUBLISTA pubInvestigador");
 
 // TEMPORAL: publicaciones creadas a mano
     publicacion* p1 = new publicacion;
-    p1->idPublicacion = 1; p1->titulo = "Redes seguras"; p1->anio = 2021;
-    p1->tipo = "Articulo"; p1->cantidadCitas = 25;
+    
+    p1->idPublicacion = 1;
+    p1->titulo = "Redes seguras";
+    p1->anio = 2021;
+    p1->tipo = "Articulo";
+    p1->cantidadCitas = 25;
+    p1->doi = "";
+    p1->investigadorPrincipal = buscarInvestigador(1);
+    p1->suRevista = NULL;
+    p1->suProyecto = NULL;
+    p1->citas = NULL;
+    p1->coautores = NULL;
+    p1->sig = NULL;
+
 
     publicacion* p2 = new publicacion;
-    p2->idPublicacion = 2; p2->titulo = "Criptografia moderna"; p2->anio = 2022;
-    p2->tipo = "Libro"; p2->cantidadCitas = 18;
+    
+    p2->idPublicacion = 2;
+    p2->titulo = "Criptografia moderna";
+    p2->anio = 2022;
+    p2->tipo = "Libro";
+    p2->cantidadCitas = 18;
+    p2->doi = "";
+    p2->investigadorPrincipal = buscarInvestigador(1);
+    p2->suRevista = NULL;
+    p2->suProyecto = NULL;
+    p2->citas = NULL;
+    p2->coautores = NULL;
+    p2->sig = NULL;
 
     prueba("Agregar 2 publicaciones a Ana");
     agregarPublicacionAInvestigador(buscarInvestigador(1), p1);
@@ -2551,17 +3494,33 @@ int main() {
 
     titulo("PRUEBA DE METRICAS");
 
-    // TEMPORAL: las 8 publicaciones del ejemplo del documento para Ana
-    int citas[8] = {25, 18, 12, 8, 5, 4, 2, 1};
-    for (int i = 0; i < 8; i++) {
-        publicacion* p = new publicacion;
-        p->idPublicacion = i + 1;
-        p->titulo = "Pub " + to_string(i + 1);
-        p->anio = 2020;
-        p->tipo = "Articulo";
-        p->cantidadCitas = citas[i];
-        agregarPublicacionAInvestigador(buscarInvestigador(1), p);
-    }
+// TEMPORAL: las 8 publicaciones del ejemplo del documento para Ana
+int citas[8] = {25, 18, 12, 8, 5, 4, 2, 1};
+
+for (int i = 0; i < 8; i++) {
+
+    publicacion* p = new publicacion;
+
+    p->idPublicacion = i + 1;
+    p->titulo = "Pub " + to_string(i + 1);
+    p->anio = 2020;
+    p->tipo = "Articulo";
+    p->cantidadCitas = citas[i];
+
+    // Inicializar los demas atributos
+    p->doi = "";
+    p->investigadorPrincipal = buscarInvestigador(1);
+    p->suRevista = NULL;
+    p->suProyecto = NULL;
+    p->citas = NULL;
+    p->coautores = NULL;
+    p->sig = NULL;
+
+    agregarPublicacionAInvestigador(
+        buscarInvestigador(1),
+        p
+    );
+}
 
     prueba("Metricas de Ana (con publicaciones)");
     mostrarMetricas(buscarInvestigador(1));
@@ -2571,7 +3530,6 @@ int main() {
     actualizarTodosLosIndicesH();
     mostrarInvestigador(buscarInvestigador(1));
 
-    
 titulo("PRUEBA DE PUBLICACIONES");
 
 prueba("Insertar 3 publicaciones validas");
@@ -2858,6 +3816,278 @@ modificarRevista(
     7.5,
     "Q9"
 );
+
+prueba("Comprobar que la publicacion sigue enlazada a la revista modificada");
+mostrarPublicacion(buscarPublicacion(103));
+
+
+titulo("PRUEBA DE ELIMINAR PUBLICACION");
+
+prueba("Crear publicacion temporal 104");
+
+insertarPublicacion(
+    104,
+    "Publicacion Temporal",
+    2025,
+    "Articulo",
+    4,
+    "10.1000/temp104",
+    buscarInvestigador(1),
+    buscarRevista(1),
+    buscarProyecto(1)
+);
+
+
+// Agregarle un coautor para probar que tambien se limpia
+agregarCoautorAPublicacion(
+    buscarPublicacion(104),
+    buscarCoautor(buscarInvestigador(1), 1)
+);
+
+
+// Agregar una cita propia de la publicacion temporal
+insertarCitacion(
+    buscarPublicacion(104),
+    2001,
+    2026,
+    buscarPublicacion(102),
+    buscarInvestigador(2)
+);
+
+
+// Crear una cita en otra publicacion que apunte a la 104.
+// Esto permite comprobar que tampoco queda un puntero colgante.
+insertarCitacion(
+    buscarPublicacion(102),
+    2002,
+    2026,
+    buscarPublicacion(104),
+    buscarInvestigador(1)
+);
+
+
+prueba("Mostrar publicacion temporal antes de eliminar");
+mostrarPublicacion(buscarPublicacion(104));
+
+prueba("Coautores de la publicacion temporal");
+mostrarCoautoresPublicacion(buscarPublicacion(104));
+
+prueba("Citaciones de la publicacion temporal");
+mostrarCitaciones(buscarPublicacion(104));
+
+
+prueba("Eliminar publicacion 104");
+eliminarPublicacion(104);
+
+
+prueba("Buscar publicacion 104 despues de eliminar");
+mostrarPublicacion(buscarPublicacion(104));
+
+
+prueba("Comprobar que se elimino de la sublista del investigador");
+
+cout << (
+    buscarPubInvestigador(buscarInvestigador(1), 104) == NULL
+    ? "Ya no esta en el investigador"
+    : "ERROR: todavia esta en el investigador"
+) << endl;
+
+
+prueba("Comprobar que se elimino de la sublista de la revista");
+
+cout << (
+    buscarPubRevista(buscarRevista(1), 104) == NULL
+    ? "Ya no esta en la revista"
+    : "ERROR: todavia esta en la revista"
+) << endl;
+
+
+prueba("Comprobar que la cita que apuntaba a 104 tambien desaparecio");
+
+mostrarCitacion(
+    buscarCitacion(buscarPublicacion(102), 2002)
+);
+
+
+prueba("Lista circular despues de eliminar 104");
+mostrarPublicaciones();
+
+
+prueba("Eliminar publicacion inexistente (debe dar error)");
+eliminarPublicacion(999);
+
+
+titulo("PRUEBA DE PRECARGA DE DATOS B");
+
+precargarDatosB();
+
+
+prueba("Comprobar las 5 revistas nuevas");
+
+mostrarRevista(buscarRevista(11));
+mostrarRevista(buscarRevista(12));
+mostrarRevista(buscarRevista(13));
+mostrarRevista(buscarRevista(14));
+mostrarRevista(buscarRevista(15));
+
+
+prueba("Comprobar los 5 proyectos nuevos");
+
+mostrarProyecto(buscarProyecto(11));
+mostrarProyecto(buscarProyecto(12));
+mostrarProyecto(buscarProyecto(13));
+mostrarProyecto(buscarProyecto(14));
+mostrarProyecto(buscarProyecto(15));
+
+
+prueba("Comprobar las 5 publicaciones nuevas");
+
+mostrarPublicacion(buscarPublicacion(201));
+mostrarPublicacion(buscarPublicacion(202));
+mostrarPublicacion(buscarPublicacion(203));
+mostrarPublicacion(buscarPublicacion(204));
+mostrarPublicacion(buscarPublicacion(205));
+
+
+prueba("Comprobar las citaciones de la publicacion 201");
+
+mostrarCitaciones(buscarPublicacion(201));
+
+
+prueba("Comprobar los coautores de la publicacion 201");
+
+mostrarCoautoresPublicacion(buscarPublicacion(201));
+
+
+prueba("Comprobar enlace publicacion - investigador");
+
+cout << (
+    buscarPubInvestigador(buscarInvestigador(1), 201) != NULL
+    ? "Publicacion 201 encontrada en investigador 1"
+    : "ERROR: publicacion 201 no esta en investigador 1"
+) << endl;
+
+
+prueba("Comprobar enlace publicacion - revista");
+
+cout << (
+    buscarPubRevista(buscarRevista(11), 201) != NULL
+    ? "Publicacion 201 encontrada en revista 11"
+    : "ERROR: publicacion 201 no esta en revista 11"
+) << endl;
+
+
+titulo("PRUEBA DE SUBLISTA pubRevista");
+
+
+prueba("Publicaciones de la revista 11");
+
+mostrarPublicacionesRevista(
+    buscarRevista(11)
+);
+
+
+prueba("Revista 15 sin publicaciones");
+
+mostrarPublicacionesRevista(
+    buscarRevista(15)
+);
+
+
+prueba("Revista inexistente");
+
+mostrarPublicacionesRevista(
+    buscarRevista(99)
+);
+
+titulo("CONSULTA 3 - PUBLICACION CON MAS CITAS");
+
+consultaPublicacionMasCitada();
+
+titulo("CONSULTA 4 - REVISTA CON MAYOR FACTOR DE IMPACTO");
+
+consultaRevistaMayorImpacto();
+
+titulo("CONSULTA 7 - AREA CON MAS PUBLICACIONES");
+
+consultaAreaMasPublicaciones();
+
+titulo("CONSULTA 8 - ANIO CON MAYOR PRODUCCION");
+
+consultaAnioMayorProduccion();
+
+titulo("CONSULTA 9 - PUBLICACION CON MAS AUTORES");
+
+consultaPublicacionMasAutores();
+
+titulo("CONSULTA 10 - INVESTIGADOR CON MAS ARTICULOS Q1");
+
+consultaInvestigadorMasArticulosQ1();
+
+titulo("REPORTE 2 - PUBLICACIONES POR ANIO");
+
+reportePublicacionesPorAnio();
+
+titulo("REPORTE 3 - PUBLICACIONES POR CANTIDAD DE CITAS");
+
+reportePublicacionesPorCitas();
+
+titulo("REPORTE 4 - REVISTAS Y FACTOR DE IMPACTO");
+
+reporteRevistasFactorImpacto();
+
+titulo("REPORTE 6 - PUBLICACIONES DE UNA REVISTA");
+
+prueba("Revista 11, que tiene publicaciones");
+reportePublicacionesDeRevista(11);
+
+prueba("Revista 15, que no tiene publicaciones");
+reportePublicacionesDeRevista(15);
+
+prueba("Revista inexistente");
+reportePublicacionesDeRevista(99);
+
+titulo("REPORTE 7 - PUBLICACIONES DE UN AREA");
+
+prueba("Area 2, que tiene publicaciones");
+reportePublicacionesDeArea(2);
+
+prueba("Area 1, que actualmente no tiene publicaciones");
+reportePublicacionesDeArea(1);
+
+prueba("Area inexistente");
+reportePublicacionesDeArea(99);
+
+titulo("REPORTE 1 - INVESTIGADORES Y PUBLICACIONES");
+reporteInvestigadoresConPublicaciones();
+
+
+titulo("REPORTE 5 - RED DE COAUTORIA");
+prueba("Red de coautoria del investigador 1");
+reporteRedCoautoria(1);
+
+
+titulo("REPORTE 8 - INVESTIGADORES POR UNIVERSIDAD");
+reporteInvestigadoresPorUniversidad();
+
+
+titulo("REPORTE 9 - INVESTIGADORES POR INDICE H");
+reporteInvestigadoresPorIndiceH();
+
+titulo("CONSULTA 1 - INVESTIGADOR CON MAYOR INDICE H");
+consultaMayorIndiceH();
+
+
+titulo("CONSULTA 2 - INVESTIGADOR CON MAS CITAS");
+consultaMasCitas();
+
+
+titulo("CONSULTA 5 - INVESTIGADOR CON MAS COAUTORES");
+consultaMasCoautores();
+
+
+titulo("CONSULTA 6 - UNIVERSIDAD CON MAS INVESTIGADORES");
+consultaUniversidadMasInvestigadores();
 
     return 0;
 }
